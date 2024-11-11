@@ -1,6 +1,6 @@
-import React from "react";
-import Image from "next/image";
-import { cn, getFileIcon } from "@/lib/utils";
+import React from 'react';
+import Image from 'next/image';
+import { cn, getFileIcon } from '@/lib/utils';
 
 interface Props {
   type: string;
@@ -13,23 +13,23 @@ interface Props {
 export const Thumbnail = ({
   type,
   extension,
-  url = "",
+  url = '',
   imageClassName,
   className,
 }: Props) => {
-  const isImage = type === "image" && extension !== "svg";
+  const isImage = type === 'image' && extension !== 'svg';
 
   return (
-    <figure className={cn("thumbnail", className)}>
+    <figure className={cn('thumbnail', className)}>
       <Image
         src={isImage ? url : getFileIcon(extension, type)}
         alt="thumbnail"
         width={100}
         height={100}
         className={cn(
-          "size-8 object-contain",
+          'size-8 object-contain',
           imageClassName,
-          isImage && "thumbnail-image",
+          isImage && 'thumbnail-image'
         )}
       />
     </figure>

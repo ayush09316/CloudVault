@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -6,9 +6,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { usePathname, useRouter } from "next/navigation";
-import { sortTypes } from "@/constants";
+} from '@/components/ui/select';
+import { usePathname, useRouter } from 'next/navigation';
+import { sortTypes } from '@/constants';
 
 const Sort = () => {
   const path = usePathname();

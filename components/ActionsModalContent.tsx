@@ -1,11 +1,11 @@
-import { Models } from "node-appwrite";
-import Thumbnail from "@/components/Thumbnail";
-import FormattedDateTime from "@/components/FormattedDateTime";
-import { convertFileSize, formatDateTime } from "@/lib/utils";
-import React from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { Models } from 'node-appwrite';
+import Thumbnail from '@/components/Thumbnail';
+import FormattedDateTime from '@/components/FormattedDateTime';
+import { convertFileSize, formatDateTime } from '@/lib/utils';
+import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="file-details-thumbnail">
@@ -56,7 +56,7 @@ export const ShareInput = ({ file, onInputChange, onRemove }: Props) => {
         <Input
           type="email"
           placeholder="Enter email address"
-          onChange={(e) => onInputChange(e.target.value.trim().split(","))}
+          onChange={(e) => onInputChange(e.target.value.trim().split(','))}
           className="share-input-field"
         />
         <div className="pt-4">

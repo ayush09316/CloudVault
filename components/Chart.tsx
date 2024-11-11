@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Label,
@@ -6,7 +6,7 @@ import {
   PolarRadiusAxis,
   RadialBar,
   RadialBarChart,
-} from "recharts";
+} from 'recharts';
 
 import {
   Card,
@@ -14,22 +14,22 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { calculatePercentage, convertFileSize } from "@/lib/utils";
+} from '@/components/ui/card';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
+import { calculatePercentage, convertFileSize } from '@/lib/utils';
 
 const chartConfig = {
   size: {
-    label: "Size",
+    label: 'Size',
   },
   used: {
-    label: "Used",
-    color: "white",
+    label: 'Used',
+    color: 'white',
   },
 } satisfies ChartConfig;
 
 export const Chart = ({ used = 0 }: { used: number }) => {
-  const chartData = [{ storage: "used", 10: used, fill: "white" }];
+  const chartData = [{ storage: 'used', 10: used, fill: 'white' }];
 
   return (
     <Card className="chart">
@@ -53,7 +53,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -69,8 +69,8 @@ export const Chart = ({ used = 0 }: { used: number }) => {
                           {used && calculatePercentage(used)
                             ? calculatePercentage(used)
                                 .toString()
-                                .replace(/^0+/, "")
-                            : "0"}
+                                .replace(/^0+/, '')
+                            : '0'}
                           %
                         </tspan>
                         <tspan
@@ -92,7 +92,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
       <CardHeader className="chart-details">
         <CardTitle className="chart-title">Available Storage</CardTitle>
         <CardDescription className="chart-description">
-          {used ? convertFileSize(used) : "2GB"} / 2GB
+          {used ? convertFileSize(used) : '2GB'} / 2GB
         </CardDescription>
       </CardHeader>
     </Card>

@@ -1,8 +1,8 @@
-import React from "react";
-import Search from "@/components/Search";
-import FileUploader from "@/components/FileUploader";
+import React from 'react';
+import Search from '@/components/Search';
+import FileUploader from '@/components/FileUploader';
 
-import ProfileDropDown from "./ProfileDropDown";
+import ProfileDropDown from './ProfileDropDown';
 
 const Header = ({
   userId,
@@ -22,10 +22,10 @@ const Header = ({
       <Search />
       <div className="header-wrapper">
         <FileUploader ownerId={userId} accountId={accountId} />
-        
+
         <div className="sidebar-user-info">
-          <ProfileDropDown avatar={avatar} fullName={fullName} email={email}/>
-          </div>
+          <ProfileDropDown avatar={avatar} fullName={fullName} email={email} />
+        </div>
       </div>
     </header>
   );

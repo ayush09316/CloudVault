@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState } from 'react';
 
-import { useDropzone } from "react-dropzone";
-import { Button } from "@/components/ui/button";
-import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
-import Image from "next/image";
-import Thumbnail from "@/components/Thumbnail";
-import { MAX_FILE_SIZE } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
-import { uploadFile } from "@/lib/actions/file.actions";
-import { usePathname } from "next/navigation";
+import { useDropzone } from 'react-dropzone';
+import { Button } from '@/components/ui/button';
+import { cn, convertFileToUrl, getFileType } from '@/lib/utils';
+import Image from 'next/image';
+import Thumbnail from '@/components/Thumbnail';
+import { MAX_FILE_SIZE } from '@/constants';
+import { useToast } from '@/hooks/use-toast';
+import { uploadFile } from '@/lib/actions/file.actions';
+import { usePathname } from 'next/navigation';
 
 interface Props {
   ownerId: string;
@@ -25,45 +25,53 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles); 
-  
+      setFiles(acceptedFiles);
+
       const uploadPromises = acceptedFiles.map(async (file) => {
         try {
           if (file.size > MAX_FILE_SIZE) {
-            setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
-  
+            setFiles((prevFiles) =>
+              prevFiles.filter((f) => f.name !== file.name)
+            );
+
             return toast({
               description: (
                 <p className="body-2 text-white">
-                  <span className="font-semibold">{file.name}</span> is too large.
-                  Max file size is 50MB.
+                  <span className="font-semibold">{file.name}</span> is too
+                  large. Max file size is 50MB.
                 </p>
               ),
-              className: "error-toast",
+              className: 'error-toast',
             });
           }
-  
-  
-          const uploadedFile = await uploadFile({ file, ownerId, accountId, path });
+
+          const uploadedFile = await uploadFile({
+            file,
+            ownerId,
+            accountId,
+            path,
+          });
           if (uploadedFile) {
-            setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+            setFiles((prevFiles) =>
+              prevFiles.filter((f) => f.name !== file.name)
+            );
           }
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
         }
       });
-  
+
       await Promise.allSettled(uploadPromises);
     },
-    [ownerId, accountId, path],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ownerId, accountId, path]
   );
-  
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
-    fileName: string,
+    fileName: string
   ) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
@@ -72,13 +80,13 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
   return (
     <div {...getRootProps()} className="cursor-pointer">
       <input {...getInputProps()} />
-      <Button type="button" className={cn("uploader-button", className)}>
+      <Button type="button" className={cn('uploader-button', className)}>
         <Image
           src="/assets/icons/upload.svg"
           alt="upload"
           width={24}
           height={24}
-        />{" "}
+        />{' '}
         <p>Upload</p>
       </Button>
       {files.length > 0 && (

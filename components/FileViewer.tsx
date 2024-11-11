@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React, { useState, useCallback, useMemo } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import Sort from "@/components/Sort";
-import FileCard from "@/components/FileCard";
-import { Models } from "node-appwrite";
-import { convertFileSize } from "@/lib/utils";
-import Card from "./Card";
+import React, { useState, useCallback, useMemo } from 'react';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import Sort from '@/components/Sort';
+import FileCard from '@/components/FileCard';
+import { Models } from 'node-appwrite';
+import { convertFileSize } from '@/lib/utils';
+import Card from './Card';
 
 type FileViewerProps = {
   files: Models.Document[];
@@ -47,17 +47,22 @@ const FileViewer = ({ files, totalSize, type }: FileViewerProps) => {
             <Button
               onClick={handleToggle}
               className={`hidden rounded-lg p-2 lg:block ${
-                isActive ? "bg-brand" : "bg-gray-400"
+                isActive ? 'bg-brand' : 'bg-gray-400'
               } hover:bg-brand/80`}
             >
-              <Image src="/assets/images/view.svg" alt="view" width={20} height={20} />
+              <Image
+                src="/assets/images/view.svg"
+                alt="view"
+                width={20}
+                height={20}
+              />
             </Button>
           </div>
         </div>
       </section>
 
       {files.length > 0 ? (
-        <section className={isActive ? "file-list" : "file-stack"}>
+        <section className={isActive ? 'file-list' : 'file-stack'}>
           {files.map((file: Models.Document) =>
             isActive ? (
               <Card key={file.$id} file={file} />

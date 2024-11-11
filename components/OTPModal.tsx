@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   AlertDialog,
@@ -8,18 +8,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
-import React, { useState } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { verifySecret, sendEmailOTP } from "@/lib/actions/user.actions";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/input-otp';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { verifySecret, sendEmailOTP } from '@/lib/actions/user.actions';
+import { useRouter } from 'next/navigation';
 
 const OtpModal = ({
   accountId,
@@ -30,20 +30,19 @@ const OtpModal = ({
 }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-
     try {
       const sessionId = await verifySecret({ accountId, password });
 
-      if (sessionId) router.push("/");
+      if (sessionId) router.push('/');
     } catch (error) {
-      console.log("Failed to verify OTP", error);
+      console.log('Failed to verify OTP', error);
     }
 
     setIsLoading(false);
@@ -69,7 +68,7 @@ const OtpModal = ({
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="subtitle-2 text-center text-light-100">
-            We&apos;ve sent a code to{" "}
+            We&apos;ve sent a code to{' '}
             <span className="pl-1 text-brand">{email}</span>
           </AlertDialogDescription>
         </AlertDialogHeader>

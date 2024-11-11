@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import Image from "next/image";
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import { Separator } from "@radix-ui/react-separator";
-import { navItems } from "@/constants";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import FileUploader from "@/components/FileUploader";
-import { signOutUser } from "@/lib/actions/user.actions";
+} from '@/components/ui/sheet';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { Separator } from '@radix-ui/react-separator';
+import { navItems } from '@/constants';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import FileUploader from '@/components/FileUploader';
+import { signOutUser } from '@/lib/actions/user.actions';
 
 interface Props {
   $id: string;
@@ -78,8 +78,8 @@ const MobileNavigation = ({
                 <Link key={name} href={url} className="lg:w-full">
                   <li
                     className={cn(
-                      "mobile-nav-item",
-                      pathname === url && "shad-active",
+                      'mobile-nav-item',
+                      pathname === url && 'shad-active'
                     )}
                   >
                     <Image
@@ -88,8 +88,8 @@ const MobileNavigation = ({
                       width={24}
                       height={24}
                       className={cn(
-                        "nav-icon",
-                        pathname === url && "nav-icon-active",
+                        'nav-icon',
+                        pathname === url && 'nav-icon-active'
                       )}
                     />
                     <p>{name}</p>
@@ -102,7 +102,11 @@ const MobileNavigation = ({
           <Separator className="my-5 bg-light-200/20" />
 
           <div className="flex flex-col justify-between gap-5 pb-5">
-            <FileUploader ownerId={ownerId} accountId={accountId} className="w-full" />
+            <FileUploader
+              ownerId={ownerId}
+              accountId={accountId}
+              className="w-full"
+            />
             <Button
               type="submit"
               className="mobile-sign-out-button"

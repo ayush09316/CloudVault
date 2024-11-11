@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-
-declare type FileType = "document" | "image" | "video" | "audio" | "other";
+declare type FileType = 'document' | 'image' | 'video' | 'audio' | 'other';
 
 declare interface ActionType {
   label: string;
@@ -19,6 +17,22 @@ declare interface UploadFileProps {
   accountId: string;
   path: string;
 }
+
+type MediaType = {
+  size: number;
+  latestDate: string;
+};
+
+export interface TotalSpace {
+  image: MediaType;
+  document: MediaType;
+  video: MediaType;
+  audio: MediaType;
+  other: MediaType;
+  used: number;
+  all: number;
+}
+
 declare interface GetFilesProps {
   types: FileType[];
   searchText?: string;
