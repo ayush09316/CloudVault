@@ -1,6 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "standard", "plugin:tailwindcss/recommended", "prettier" ],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "standard",
+    "plugin:tailwindcss/recommended",
+    "prettier",
+    "eslint:recommended"
+  ],
+  "plugins": ["prettier"],
   "rules": {
+    "prettier/prettier": "error",
     "no-undef": "off"
   }
 }

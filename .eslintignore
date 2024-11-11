@@ -1,0 +1,34 @@
+# Ignore build artifacts
+build/
+.next/
+dist/
+
+# Ignore node_modules folder
+node_modules/
+
+# Ignore all HTML files
+*.html
+
+# Ignore configuration files (if they are not needed for linting)
+*.config.js
+*.config.ts
+.eslintrc.js
+.prettierrc.js
+
+# Ignore logs or temp files
+*.log
+*.tmp
+
+# Ignore specific folders if necessary
+public/
+assets/
+
+# Ignore test-related folders or files
+tests/
+__tests__/
+test/
+
+# Ignore specific files
+src/someSpecificFile.tsx
+.husky/
+docker/
