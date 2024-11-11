@@ -250,6 +250,9 @@
   .file-list {
     @apply grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 !important;
   }
+  .file-stack {
+    @apply flex w-full gap-6 flex-col !important;
+  }
   .sort-container {
     @apply mt-5 flex items-center sm:mt-0 sm:gap-3 !important;
   }
@@ -366,7 +369,7 @@
     @apply flex-center min-w-fit gap-4 !important;
   }
   .sign-out-button {
-    @apply flex-center h-[52px] min-w-[54px] items-center rounded-full bg-brand/10 p-0 text-brand shadow-none transition-all hover:bg-brand/20 !important;
+    @apply flex-center  w-full items-center rounded-2xl bg-brand/10 p-2 mt-2 text-brand shadow-none transition-all hover:bg-brand/20 !important;
   }
 
   /* Mobile Navigation */
@@ -425,10 +428,10 @@
     @apply flex text-light-100 gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[30px] h-[52px] lg:rounded-full !important;
   }
   .sidebar-user-info {
-    @apply mt-4 flex items-center justify-center gap-2 rounded-full bg-brand/10 p-1 text-light-100 lg:justify-start lg:p-3 !important;
+    @apply  flex items-center justify-center gap-2 rounded-full bg-brand/10 p-1 text-light-100 lg:justify-start lg:p-3 !important;
   }
   .sidebar-user-avatar {
-    @apply aspect-square w-10 rounded-full object-cover !important;
+    @apply aspect-square w-8 rounded-full object-cover !important;
   }
 
   .shad-active {

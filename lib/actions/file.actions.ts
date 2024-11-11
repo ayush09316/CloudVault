@@ -1,12 +1,13 @@
 "use server";
 
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
-import { InputFile } from "node-appwrite/file";
+// import { InputFile } from "node-appwrite/file";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/actions/user.actions";
+// import { redirect } from "next/navigation";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -26,16 +27,13 @@ export const uploadFile = async ({
       throw new Error("Invalid file or file name");
     }
 
-    const inputFile = InputFile.fromBuffer(file, file.name);
-
-
+    // const inputFile = InputFile.fromBuffer(file, file.name);
 
     const bucketFile = await storage.createFile(
       appwriteConfig.bucketId,
       ID.unique(),
-      inputFile
+      file
     );
-    console.log("File created in storage:");
 
     const fileDocument = {
       type: getFileType(bucketFile.name).type,
@@ -49,7 +47,6 @@ export const uploadFile = async ({
       bucketFileId: bucketFile.$id,
     };
 
-    console.log("Attempting to create document in database...",fileDocument);
 
     const newFile = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -67,7 +64,7 @@ export const uploadFile = async ({
     return parseStringify(newFile);
   } catch (error) {
     console.error("File upload failed:");
-    // handleError(error, "Failed to upload file");
+    handleError(error, "Failed to upload file");
   }
 };
 
@@ -112,7 +109,9 @@ export const getFiles = async ({
   try {
     const currentUser = await getCurrentUser();
 
-    if (!currentUser) throw new Error("User not found");
+    if (!currentUser){
+      throw new Error("User not found");
+    }
 
     const queries = createQueries(currentUser, types, searchText, sort, limit);
 

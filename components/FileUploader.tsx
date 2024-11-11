@@ -25,47 +25,39 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
-      
-      
-      
+      setFiles(acceptedFiles); 
+  
       const uploadPromises = acceptedFiles.map(async (file) => {
-        if (file.size > MAX_FILE_SIZE) {
-          setFiles((prevFiles) =>
-            prevFiles.filter((f) => f.name !== file.name),
-          );
-
-          return toast({
-            description: (
-              <p className="body-2 text-white">
-                <span className="font-semibold">{file.name}</span> is too large.
-                Max file size is 50MB.
-              </p>
-            ),
-            className: "error-toast",
-          });
+        try {
+          if (file.size > MAX_FILE_SIZE) {
+            setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+  
+            return toast({
+              description: (
+                <p className="body-2 text-white">
+                  <span className="font-semibold">{file.name}</span> is too large.
+                  Max file size is 50MB.
+                </p>
+              ),
+              className: "error-toast",
+            });
+          }
+  
+  
+          const uploadedFile = await uploadFile({ file, ownerId, accountId, path });
+          if (uploadedFile) {
+            setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+          }
+        } catch (error) {
+          console.error(`Failed to upload ${file.name}:`, error);
         }
-
-        console.log("Uploading file:", files);
-        
-
-        return uploadFile({ file, ownerId, accountId, path }).then(
-          (uploadedFile) => {
-            if (uploadedFile) {
-              setFiles((prevFiles) =>
-                prevFiles.filter((f) => f.name !== file.name),
-              );
-            }
-          },
-        );
       });
-      console.log("uploadPromises:", uploadPromises);
-      
-
-      await Promise.all(uploadPromises);
+  
+      await Promise.allSettled(uploadPromises);
     },
     [ownerId, accountId, path],
   );
+  
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 

@@ -14,11 +14,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createAccount, signInUser } from "@/lib/actions/user.actions";
-import OtpModal from "@/components/OTPModal";
+const OtpModal = dynamic(() => import("@/components/OTPModal"), { ssr: false });
 
 type FormType = "sign-in" | "sign-up";
 
