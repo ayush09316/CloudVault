@@ -57,6 +57,8 @@ A storage management and file sharing platform that lets users effortlessly uplo
 
 👉 **Modern Responsive Design**: A fresh and minimalist UI that emphasizes usability, ensuring a clean aesthetic across all devices.
 
+👉 **Grid and List View**:  Allow users to toggle between grid (thumbnail) and list views. Use CSS and JavaScript to switch layouts dynamically.
+
 and many more, including the latest **React 19**, **Next.js 15** and **Appwrite** features alongside code architecture and
 reusability
 
