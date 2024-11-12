@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-prod
+  labels:
+    app: cloud-vault-client
+spec:
+  selector:
+    app: cloud-vault-client
+    stage: production
+  ports:
+    - protocol: TCP
+      port: 8000           # Exposed port on the Service for production
+      targetPort: 8000     # Port in the container for production
+  type: LoadBalancer     # Change to NodePort if you need external access (for production)

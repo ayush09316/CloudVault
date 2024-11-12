@@ -3,3 +3,6 @@ node_modules
 Dockerfile
 .dockerignore
 README.md
+k8s
+.github
+.husky

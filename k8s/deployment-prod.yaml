@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-vault-deployment-prod
+  labels:
+    app: cloud-vault-client
+    stage: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloud-vault-client
+      stage: production
+  template:
+    metadata:
+      labels:
+        app: cloud-vault-client
+        stage: production
+    spec:
+      containers:
+      - name: cloud-vault-client-prod-1
+        image: ayushh09316/cloud-vault-prod:v1.0  # Use your prod image
+        ports:
+        - containerPort: 8000  # Match this to the container's exposed port (8000 for prod)
+        env:
+        - name: NODE_ENV
+          value: "production"  # Set the environment variable to "production"
