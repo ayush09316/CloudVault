@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloud-vault-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: cloud-vault.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service-prod # The service name for the production environment
+            port:
+              number: 8000
+      - path: /staging
+        pathType: Prefix
+        backend:
+          service:
+            name: service-stage # The service name for the staging environment
+            port:
+              number: 3000
