@@ -20,6 +20,7 @@
 2. ⚙️ [Tech Stack](#tech-stack)
 3. 🔋 [Features](#features)
 4. 🤸 [Quick Start](#quick-start)
+5. 🛠️ [Dockerization and Kubernetes Deployment](#dockerization-and-kubernetes-deployment)
 
 
 
@@ -27,15 +28,23 @@
 
 A storage management and file sharing platform that lets users effortlessly upload, organize, and share files. Built with the latest Next.js 15 and the Appwrite Node SDK, utilizing advanced features for seamless file management.
 
+This application is dockerized, deployed on Kubernetes, and follows a CI/CD pipeline managed through GitHub Actions. We ensure code quality and consistency using ESLint, Prettier, and Husky hooks for seamless development.
+
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
 
-- React 19
-- Next.js 15
-- Appwrite
-- TailwindCSS
-- ShadCN
-- TypeScript
+- **React 19**
+- **Next.js 15**
+- **Appwrite** (Authentication, File Storage)
+- **TailwindCSS**
+- **ShadCN**
+- **TypeScript**
+- **Docker** (for containerization)
+- **Kubernetes** (for deployment)
+- **GitHub Actions** (for CI/CD pipeline)
+- **ESLint** (for linting)
+- **Prettier** (for code formatting)
+- **Husky** (for Git hooks)
 
 ## <a name="features">🔋 Features</a>
 
@@ -57,6 +66,8 @@ A storage management and file sharing platform that lets users effortlessly uplo
 
 👉 **Modern Responsive Design**: A fresh and minimalist UI that emphasizes usability, ensuring a clean aesthetic across all devices.
 
+👉 **Grid and List View**:  Allow users to toggle between grid (thumbnail) and list views. Use CSS and JavaScript to switch layouts dynamically.
+
 and many more, including the latest **React 19**, **Next.js 15** and **Appwrite** features alongside code architecture and
 reusability
 
@@ -71,6 +82,8 @@ Make sure you have the following installed on your machine:
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/en)
 - [npm](https://www.npmjs.com/) (Node Package Manager)
+- [Docker](https://www.docker.com/products/docker-desktop) (for containerization)
+- [Kubernetes](https://kubernetes.io/) (for deployment)
 
 **Cloning the Repository**
 
@@ -111,5 +124,36 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the project.
+
+
+<br/>
+
+
+## <a name="dockerization-and-kubernetes-deployment">🛠️ Dockerization and Kubernetes Deployment</a>
+
+
+
+**Docker Setup**
+
+- Dockerfile: The application is built using a Dockerfile, which creates a Docker image of the app. This image can then be deployed to any environment that supports Docker.
+  
+**Kubernetes Deployment**
+
+- Kubernetes: The project is deployed on Kubernetes, using a Kubernetes cluster to manage scaling, monitoring, and production deployment.
+  
+**CI/CD Pipeline**
+
+- GitHub Actions: The project integrates CI/CD through GitHub Actions, automating testing, linting, building, and deployment processes. Every push to the main branch triggers the pipeline, ensuring a seamless development workflow.
+  
+**Linting and Code Quality**
+
+- ESLint: The project uses ESLint to maintain code quality by enforcing coding standards.
+- Prettier: Prettier ensures that the code is formatted consistently across the project.
+- Husky: Husky is used for Git hooks, running pre-commit hooks to prevent errors from entering the codebase.
+  
+**Deployment Workflow**
+
+- Staging Environment: Code is automatically deployed to a staging environment for testing.
+- Production Environment: Once tested in staging, the application is deployed to the production environment.
 
 
