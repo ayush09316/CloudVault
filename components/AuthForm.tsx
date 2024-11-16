@@ -36,7 +36,7 @@ const authFormSchema = (formType: FormType) => {
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [accountId, setAccountId] = useState(null);
+  const [accountId, setAccountId] = useState<string | null>(null);
 
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,7 +62,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
       setAccountId(user.accountId);
     } catch {
-      setErrorMessage('Failed to create account. Please try again.');
+      if (type === 'sign-up') {
+        setErrorMessage('Failed to create account. Please try again.');
+      } else {
+        setErrorMessage('Failed to sign in. Please check your credentials.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -141,19 +145,26 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
-          <div className="body-2 flex justify-center">
-            <p className="text-light-100">
-              {type === 'sign-in'
-                ? "Don't have an account?"
-                : 'Already have an account?'}
-            </p>
-            <Link
-              href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-              className="ml-1 font-medium text-brand"
-            >
-              {' '}
-              {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
-            </Link>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex w-full items-center gap-8">
+              <div className="h-px flex-1 bg-black" />
+              <span className="body-2">OR</span>
+              <div className="h-px flex-1 bg-black" />
+            </div>
+
+            <div className="body-2 flex items-center justify-center">
+              <p className="text-light-100">
+                {type === 'sign-in'
+                  ? "Don't have an account?"
+                  : 'Already have an account?'}
+              </p>
+              <Link
+                href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
+                className="ml-1 font-medium text-brand"
+              >
+                {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+              </Link>
+            </div>
           </div>
         </form>
       </Form>
