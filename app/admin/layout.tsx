@@ -16,7 +16,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className="flex h-screen">
-      <Sidebar navItems={adminNavItems} isAdmin={currentUser.isAdmin} />
+      <Sidebar navItems={adminNavItems} />
 
       <section className="flex h-full flex-1 flex-col">
         <MobileNavigation {...currentUser} />

@@ -7,26 +7,32 @@ import { cn } from '@/lib/utils';
 
 interface SidebarInterface {
   navItems: { url: string; name: string; icon: string }[];
-  isAdmin: boolean;
 }
 
-const Sidebar = ({ navItems, isAdmin }: SidebarInterface) => {
+const Sidebar = ({ navItems }: SidebarInterface) => {
   const pathname = usePathname();
+  const isPathAdmin = pathname.includes('admin');
 
   return (
     <aside className="sidebar">
       <Link href="/">
-        <Image
-          src={
-            isAdmin
-              ? '/assets/icons/logo-full-admin.svg'
-              : '/assets/icons/logo-full-brand.svg'
-          }
-          alt="logo"
-          width={160}
-          height={50}
-          className="hidden h-auto lg:block"
-        />
+        {isPathAdmin ? (
+          <Image
+            src="/assets/icons/logo-full-admin.svg"
+            alt="logo"
+            width={160}
+            height={50}
+            className="hidden h-auto lg:block"
+          />
+        ) : (
+          <Image
+            src="/assets/icons/logo-full-brand.svg"
+            alt="logo"
+            width={160}
+            height={50}
+            className="hidden h-auto lg:block"
+          />
+        )}
 
         <Image
           src="/assets/icons/logo-brand.svg"
