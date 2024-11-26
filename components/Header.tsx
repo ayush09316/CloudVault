@@ -26,12 +26,7 @@ const Header = ({
         {!isAdmin && <FileUploader ownerId={userId} accountId={accountId} />}
 
         <div className="sidebar-user-info">
-          <ProfileDropDown
-            avatar={avatar}
-            fullName={fullName}
-            email={email}
-            isAdmin={isAdmin}
-          />
+          <ProfileDropDown avatar={avatar} fullName={fullName} email={email} />
         </div>
       </div>
     </header>

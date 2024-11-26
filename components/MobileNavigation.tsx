@@ -34,6 +34,7 @@ const MobileNavigation = ({
 }: Props) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isPathAdmin = pathname.includes('admin');
 
   return (
     <header className="mobile-header">
@@ -102,11 +103,14 @@ const MobileNavigation = ({
           <Separator className="my-5 bg-light-200/20" />
 
           <div className="flex flex-col justify-between gap-5 pb-5">
-            <FileUploader
-              ownerId={ownerId}
-              accountId={accountId}
-              className="w-full"
-            />
+            {!isPathAdmin && (
+              <FileUploader
+                ownerId={ownerId}
+                accountId={accountId}
+                className="w-full"
+              />
+            )}
+
             <Button
               type="submit"
               className="mobile-sign-out-button"

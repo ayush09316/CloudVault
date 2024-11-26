@@ -9,21 +9,14 @@ import {
 import Image from 'next/image';
 import { signOutUser } from '@/lib/actions/user.actions';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 interface ProfileProps {
   avatar: string;
   email: string;
   fullName: string;
-  isAdmin: boolean;
 }
 
-const ProfileDropDown = ({
-  avatar,
-  email,
-  fullName,
-  isAdmin,
-}: ProfileProps) => {
+const ProfileDropDown = ({ avatar, email, fullName }: ProfileProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -42,20 +35,6 @@ const ProfileDropDown = ({
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-xs">{fullName}</DropdownMenuItem>
         <DropdownMenuItem className="text-xs">{email}</DropdownMenuItem>
-        <DropdownMenuItem className="text-xs">
-          {isAdmin && (
-            <Link href={'/admin'} className="admin-button">
-              <Image
-                src="/assets/icons/admin.svg"
-                alt="logo"
-                width={20}
-                height={20}
-                className="w-4 "
-              />
-              <span>Admin</span>
-            </Link>
-          )}
-        </DropdownMenuItem>
         <DropdownMenuItem>
           <form
             action={async () => {
