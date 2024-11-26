@@ -18,7 +18,6 @@ type FileViewerProps = {
 const FileViewer = ({ files, totalSize, type }: FileViewerProps) => {
   const [isActive, setIsActive] = useState(true);
 
-  // Memoize the toggle handler to avoid re-rendering
   const handleToggle = useCallback(() => setIsActive((prev) => !prev), []);
 
   // Memoize the total size display to avoid recalculating on each render
@@ -61,7 +60,7 @@ const FileViewer = ({ files, totalSize, type }: FileViewerProps) => {
         </div>
       </section>
 
-      {files.length > 0 ? (
+      {files?.length > 0 ? (
         <section className={isActive ? 'file-list' : 'file-stack'}>
           {files.map((file: Models.Document) =>
             isActive ? (

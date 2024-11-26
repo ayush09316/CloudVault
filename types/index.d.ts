@@ -38,6 +38,7 @@ declare interface GetFilesProps {
   searchText?: string;
   sort?: string;
   limit?: number;
+  isAdmin?: boolean;
 }
 declare interface RenameFileProps {
   fileId: string;

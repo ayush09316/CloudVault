@@ -10,21 +10,28 @@ const Header = ({
   fullName,
   avatar,
   email,
+  isAdmin,
 }: {
   userId: string;
   accountId: string;
   fullName: string;
   avatar: string;
   email: string;
+  isAdmin: boolean;
 }) => {
   return (
     <header className="header">
       <Search />
       <div className="header-wrapper">
-        <FileUploader ownerId={userId} accountId={accountId} />
+        {!isAdmin && <FileUploader ownerId={userId} accountId={accountId} />}
 
         <div className="sidebar-user-info">
-          <ProfileDropDown avatar={avatar} fullName={fullName} email={email} />
+          <ProfileDropDown
+            avatar={avatar}
+            fullName={fullName}
+            email={email}
+            isAdmin={isAdmin}
+          />
         </div>
       </div>
     </header>

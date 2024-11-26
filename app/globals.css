@@ -369,7 +369,10 @@
     @apply flex-center min-w-fit gap-4 !important;
   }
   .sign-out-button {
-    @apply flex-center  w-full items-center rounded-2xl bg-brand/10 p-2 mt-2 text-brand shadow-none transition-all hover:bg-brand/20 !important;
+    @apply flex-center  w-full items-center rounded-xl bg-brand/10 p-2 mt-2 text-brand shadow-none transition-all hover:bg-brand/20 !important;
+  }
+  .admin-button {
+    @apply flex-center gap-4 w-full items-center rounded-xl bg-brand p-2 mt-2 text-white font-medium text-[14px] shadow-none transition-all !important;
   }
 
   /* Mobile Navigation */

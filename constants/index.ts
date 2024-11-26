@@ -26,6 +26,34 @@ export const navItems = [
   },
 ];
 
+export const adminNavItems = [
+  {
+    name: 'Dashboard',
+    icon: '/assets/icons/dashboard.svg',
+    url: '/admin',
+  },
+  {
+    name: 'Documents',
+    icon: '/assets/icons/documents.svg',
+    url: '/admin/documents',
+  },
+  {
+    name: 'Images',
+    icon: '/assets/icons/images.svg',
+    url: '/admin/images',
+  },
+  {
+    name: 'Media',
+    icon: '/assets/icons/video.svg',
+    url: '/admin/media',
+  },
+  {
+    name: 'Others',
+    icon: '/assets/icons/others.svg',
+    url: '/admin/others',
+  },
+];
+
 export const actionsDropdownItems = [
   {
     label: 'Rename',

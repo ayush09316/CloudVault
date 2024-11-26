@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { navItems } from '@/constants';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-const Sidebar = () => {
+interface SidebarInterface {
+  navItems: { url: string; name: string; icon: string }[];
+}
+
+const Sidebar = ({ navItems }: SidebarInterface) => {
   const pathname = usePathname();
 
   return (

@@ -89,7 +89,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         />{' '}
         <p>Upload</p>
       </Button>
-      {files.length > 0 && (
+      {files?.length > 0 && (
         <ul className="uploader-preview-list">
           <h4 className="h4 text-light-100">Uploading</h4>
 
