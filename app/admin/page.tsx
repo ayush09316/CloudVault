@@ -14,7 +14,7 @@ const Dashboard = async () => {
   // Parallel requests
   const [files, totalSpace] = await Promise.all([
     getFiles({ types: [], limit: 10 }),
-    getTotalSpaceUsed(),
+    getTotalSpaceUsed(true),
   ]);
 
   const usageSummary = getUsageSummary(totalSpace);

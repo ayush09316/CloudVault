@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -10,6 +9,7 @@ import { Models } from 'node-appwrite';
 import Thumbnail from '@/components/Thumbnail';
 import FormattedDateTime from '@/components/FormattedDateTime';
 import { useDebounce } from 'use-debounce';
+
 const Search = () => {
   const [query, setQuery] = useState('');
   const searchParams = useSearchParams();
@@ -19,6 +19,7 @@ const Search = () => {
   const router = useRouter();
   const path = usePathname();
   const [debouncedQuery] = useDebounce(query, 300);
+  const searchRef = useRef<HTMLDivElement | null>(null); // Ref to the search container
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -43,17 +44,36 @@ const Search = () => {
     }
   }, [searchQuery]);
 
+  useEffect(() => {
+    // Function to handle clicks outside the search box
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    // Add the event listener
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleClickItem = (file: Models.Document) => {
     setOpen(false);
     setResults([]);
-
     router.push(
       `/${file.type === 'video' || file.type === 'audio' ? 'media' : file.type + 's'}?query=${query}`
     );
   };
 
   return (
-    <div className="search">
+    <div className="search" ref={searchRef}>
       <div className="search-input-wrapper">
         <Image
           src="/assets/icons/search.svg"
