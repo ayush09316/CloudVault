@@ -13,6 +13,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) return redirect('/sign-in');
+  if (currentUser.isAdmin) return redirect('/admin');
 
   return (
     <main className="flex h-screen">
