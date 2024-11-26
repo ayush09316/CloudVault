@@ -16,12 +16,17 @@
 
 ## 📋 <a name="table">Table of Contents</a>
 
-1. 🤖 [Introduction](#introduction)
-2. ⚙️ [Tech Stack](#tech-stack)
-3. 🔋 [Features](#features)
-4. 🤸 [Quick Start](#quick-start)
-5. 🛠️ [Dockerization and Kubernetes Deployment](#dockerization-and-kubernetes-deployment)
+1. 📊 [Overview](#overview)
+2. 🤖 [Introduction](#introduction)
+3. ⚙️ [Tech Stack](#tech-stack)
+4. 🔋 [Features](#features)
+5. 🤸 [Quick Start](#quick-start)
+6. 🛠️ [Dockerization and Kubernetes Deployment](#dockerization-and-kubernetes-deployment)
 
+## <a name="overview">🤖 Overview</a>
+
+![Screenshot 2024-11-26 183826](https://github.com/user-attachments/assets/87b2e868-0016-41ec-ba86-ad32efa7b4b3)
+![Screenshot 2024-11-26 184636](https://github.com/user-attachments/assets/22f2e3f9-2083-4388-9efe-2f359ebfc7a0)
 
 
 ## <a name="introduction">🤖 Introduction</a>
@@ -67,6 +72,8 @@ This application is dockerized, deployed on Kubernetes, and follows a CI/CD pipe
 👉 **Modern Responsive Design**: A fresh and minimalist UI that emphasizes usability, ensuring a clean aesthetic across all devices.
 
 👉 **Grid and List View**:  Allow users to toggle between grid (thumbnail) and list views. Use CSS and JavaScript to switch layouts dynamically.
+
+👉 Admin platform: Empower admins with comprehensive insights, including total storage usage, recent uploads, and a summary of files categorized by type. Monitor and manage the system's performance efficiently with real-time data.
 
 and many more, including the latest **React 19**, **Next.js 15** and **Appwrite** features alongside code architecture and
 reusability
@@ -155,5 +162,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 - Staging Environment: Code is automatically deployed to a staging environment for testing.
 - Production Environment: Once tested in staging, the application is deployed to the production environment.
-
 
