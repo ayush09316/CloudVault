@@ -85,6 +85,7 @@ export const createAccount = async ({
         email,
         avatar: avatarPlaceholderUrl,
         accountId,
+        isAdmin: false,
       }
     );
 
