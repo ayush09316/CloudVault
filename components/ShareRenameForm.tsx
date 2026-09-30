@@ -47,7 +47,9 @@ const ShareRenameForm = ({
       <Button variant="outline" onClick={submit}>
         Rename
       </Button>
-      {status && <p className="body-2 text-light-200">{status}</p>}
+      {status && (
+        <p className="body-2 text-light-200 dark:text-ink-400">{status}</p>
+      )}
     </div>
   );
 };

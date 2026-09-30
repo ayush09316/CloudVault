@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,12 @@ const NewFolderButton = ({ parentId }: { parentId: string | null }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener('cloudvault:new-folder', handler);
+    return () => window.removeEventListener('cloudvault:new-folder', handler);
+  }, []);
 
   const submit = async () => {
     if (!name.trim()) return;
@@ -46,7 +52,7 @@ const NewFolderButton = ({ parentId }: { parentId: string | null }) => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="shad-dialog button">
           <DialogHeader>
-            <DialogTitle className="text-center text-light-100">
+            <DialogTitle className="text-center text-light-100 dark:text-ink-200">
               New folder
             </DialogTitle>
           </DialogHeader>

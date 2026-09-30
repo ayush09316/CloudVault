@@ -3,12 +3,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { FolderOpen, Trash2, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Sort from '@/components/Sort';
 import FileCard from '@/components/FileCard';
 import Card from '@/components/Card';
 import FilePreview from '@/components/FilePreview';
 import SelectionToolbar from '@/components/SelectionToolbar';
+import EmptyState from '@/components/EmptyState';
 import { convertFileSize } from '@/lib/utils';
 import { getFiles } from '@/lib/actions/file.actions';
 import { FileDocument, GetFilesProps } from '@/types';
@@ -108,7 +110,7 @@ const FileViewer = ({
           <div className="flex items-center gap-4">
             {toolbar}
             {selectable && files.length > 0 && (
-              <label className="body-2 flex cursor-pointer items-center gap-2 text-light-200">
+              <label className="body-2 flex cursor-pointer items-center gap-2 text-light-200 dark:text-ink-400">
                 <input
                   type="checkbox"
                   className="size-4 accent-brand"
@@ -120,21 +122,28 @@ const FileViewer = ({
             )}
             {mode === 'browse' && (
               <div className="sort-container">
-                <p className="body-1 hidden text-light-200 sm:block">
+                <p className="body-1 hidden text-light-200 dark:text-ink-400 sm:block">
                   Sort by:
                 </p>
                 <Sort />
               </div>
             )}
             <Button
+              type="button"
               onClick={() => setIsActive((prev) => !prev)}
+              aria-label={
+                isActive ? 'Switch to list view' : 'Switch to grid view'
+              }
+              aria-pressed={isActive}
               className={`hidden rounded-lg p-2 lg:block ${
-                isActive ? 'bg-brand' : 'bg-gray-400'
-              } hover:bg-brand/80`}
+                isActive
+                  ? 'bg-vault-600 hover:bg-vault-700 dark:bg-vault-500'
+                  : 'bg-ink-400 hover:bg-ink-500'
+              }`}
             >
               <Image
                 src="/assets/images/view.svg"
-                alt="view"
+                alt=""
                 width={20}
                 height={20}
               />
@@ -168,7 +177,30 @@ const FileViewer = ({
           })}
         </section>
       ) : (
-        <p className="empty-list">{emptyText}</p>
+        <EmptyState
+          icon={mode === 'trash' ? Trash2 : FolderOpen}
+          title={emptyText}
+          description={
+            mode === 'trash'
+              ? 'Deleted files and folders will show up here until you empty them.'
+              : 'Drag and drop, or use the upload button to add your first file.'
+          }
+          action={
+            mode === 'browse' ? (
+              <Button
+                type="button"
+                onClick={() =>
+                  window.dispatchEvent(new Event('cloudvault:upload'))
+                }
+                className="mt-2 rounded-full bg-vault-600 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
+              >
+                <Upload className="size-4" aria-hidden="true" />
+                Upload your first file
+              </Button>
+            ) : undefined
+          }
+          className="w-full"
+        />
       )}
 
       {cursor && query && (

@@ -29,6 +29,7 @@ import {
 } from '@/lib/actions/share.actions';
 import { useToast } from '@/hooks/use-toast';
 import { ActivityEntry, FileDocument, ShareDocument } from '@/types';
+import { ACTION_LABELS, describeActivityMeta } from '@/lib/activity';
 
 const ImageThumbnail = ({ file }: { file: FileDocument }) => (
   <div className="file-details-thumbnail">
@@ -50,35 +51,6 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
     <p className="file-details-value text-left">{value}</p>
   </div>
 );
-
-const ACTION_LABELS: Record<string, string> = {
-  uploaded: 'Uploaded',
-  created_folder: 'Created folder',
-  renamed: 'Renamed',
-  moved: 'Moved',
-  trashed: 'Moved to trash',
-  restored: 'Restored',
-  deleted_permanently: 'Deleted permanently',
-  shared: 'Shared',
-  shared_link: 'Created share link',
-  unshared: 'Revoked access',
-};
-
-const describeMeta = (entry: ActivityEntry) => {
-  const m = entry.meta ?? {};
-  switch (entry.action) {
-    case 'renamed':
-      return `${m.from} → ${m.to}`;
-    case 'shared':
-      return `${m.granteeEmail} (${m.role})`;
-    case 'shared_link':
-      return `${m.role} link${m.expiresAt ? `, expires ${formatDateTime(m.expiresAt as string)}` : ''}`;
-    case 'unshared':
-      return m.link ? 'share link' : String(m.granteeEmail ?? '');
-    default:
-      return '';
-  }
-};
 
 const ActivityList = ({ fileId }: { fileId: string }) => {
   const [entries, setEntries] = useState<ActivityEntry[] | null>(null);
@@ -103,12 +75,19 @@ const ActivityList = ({ fileId }: { fileId: string }) => {
         <li key={e.$id} className="flex flex-col">
           <p className="subtitle-2">
             {ACTION_LABELS[e.action] ?? e.action}
-            <span className="body-2 text-light-200"> · {e.actorName}</span>
+            <span className="body-2 text-light-200 dark:text-ink-400">
+              {' '}
+              · {e.actorName}
+            </span>
           </p>
-          {describeMeta(e) && (
-            <p className="caption text-light-100">{describeMeta(e)}</p>
+          {describeActivityMeta(e) && (
+            <p className="caption text-light-100 dark:text-ink-200">
+              {describeActivityMeta(e)}
+            </p>
           )}
-          <p className="caption text-light-200">{formatDateTime(e.at)}</p>
+          <p className="caption text-light-200 dark:text-ink-400">
+            {formatDateTime(e.at)}
+          </p>
         </li>
       ))}
     </ul>
@@ -211,7 +190,7 @@ export const ShareInput = ({ file }: { file: FileDocument }) => {
       <ImageThumbnail file={file} />
 
       <div className="share-wrapper">
-        <p className="subtitle-2 pl-1 text-light-100">
+        <p className="subtitle-2 pl-1 text-light-100 dark:text-ink-200">
           Share file with other users
         </p>
         <div className="flex gap-2">
@@ -255,8 +234,12 @@ export const ShareInput = ({ file }: { file: FileDocument }) => {
 
         <div className="pt-4">
           <div className="flex justify-between">
-            <p className="subtitle-2 text-light-100">Shared with</p>
-            <p className="subtitle-2 text-light-200">{grants.length} users</p>
+            <p className="subtitle-2 text-light-100 dark:text-ink-200">
+              Shared with
+            </p>
+            <p className="subtitle-2 text-light-200 dark:text-ink-400">
+              {grants.length} users
+            </p>
           </div>
 
           <ul className="pt-2">
@@ -267,7 +250,9 @@ export const ShareInput = ({ file }: { file: FileDocument }) => {
               >
                 <p className="subtitle-2">
                   {s.granteeEmail}{' '}
-                  <span className="caption text-light-200">({s.role})</span>
+                  <span className="caption text-light-200 dark:text-ink-400">
+                    ({s.role})
+                  </span>
                 </p>
                 <Button
                   onClick={() =>
@@ -292,7 +277,9 @@ export const ShareInput = ({ file }: { file: FileDocument }) => {
         </div>
 
         <div className="pt-4">
-          <p className="subtitle-2 text-light-100">Share links</p>
+          <p className="subtitle-2 text-light-100 dark:text-ink-200">
+            Share links
+          </p>
           <div className="flex gap-2 pt-2">
             <Select
               value={linkRole}
@@ -349,7 +336,7 @@ export const ShareInput = ({ file }: { file: FileDocument }) => {
                   className="share-input-field text-xs"
                   onFocus={(e) => e.currentTarget.select()}
                 />
-                <span className="caption whitespace-nowrap text-light-200">
+                <span className="caption whitespace-nowrap text-light-200 dark:text-ink-400">
                   {s.role}
                   {s.expiresAt ? ` · until ${formatDateTime(s.expiresAt)}` : ''}
                 </span>

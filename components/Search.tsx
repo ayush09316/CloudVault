@@ -106,14 +106,14 @@ const Search = () => {
                       url={getThumbnailSrc(file as FileDocument)}
                       className="size-9 min-w-9"
                     />
-                    <p className="subtitle-2 line-clamp-1 text-light-100">
+                    <p className="subtitle-2 line-clamp-1 text-light-100 dark:text-ink-200">
                       {file.name}
                     </p>
                   </div>
 
                   <FormattedDateTime
                     date={file.$createdAt}
-                    className="caption line-clamp-1 text-light-200"
+                    className="caption line-clamp-1 text-light-200 dark:text-ink-400"
                   />
                 </li>
               ))

@@ -31,7 +31,7 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
   const toolbar = currentUser?.isAdmin ? (
     <Link
       href={scope === 'all' ? `/${type}` : `/${type}?scope=all`}
-      className="body-2 text-brand"
+      className="body-2 text-brand dark:text-vault-300"
     >
       {scope === 'all' ? 'Show only mine' : 'Show all users'}
     </Link>

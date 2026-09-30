@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ShieldCheck } from 'lucide-react';
 
 interface SidebarInterface {
   navItems: { url: string; name: string; icon: string }[];
@@ -15,28 +16,33 @@ const Sidebar = ({ navItems, isAdmin = false }: SidebarInterface) => {
 
   return (
     <aside className="sidebar">
-      <Link href="/">
-        {isAdmin ? (
-          <Image
-            src="/assets/icons/logo-full-admin.svg"
-            alt="logo"
-            width={160}
-            height={50}
-            className="hidden h-auto lg:block"
-          />
-        ) : (
-          <Image
-            src="/assets/icons/logo-full-brand.svg"
-            alt="logo"
-            width={160}
-            height={50}
-            className="hidden h-auto lg:block"
-          />
-        )}
+      <Link href="/dashboard">
+        <Image
+          src={
+            isAdmin
+              ? '/assets/icons/logo-full-admin.svg'
+              : '/assets/icons/logo-full-brand.svg'
+          }
+          alt="CloudVault"
+          width={160}
+          height={40}
+          className="hidden h-auto dark:hidden lg:block"
+        />
+        <Image
+          src={
+            isAdmin
+              ? '/assets/icons/logo-full-admin-dark.svg'
+              : '/assets/icons/logo-full-brand-dark.svg'
+          }
+          alt="CloudVault"
+          width={160}
+          height={40}
+          className="hidden h-auto dark:lg:block"
+        />
 
         <Image
           src="/assets/icons/logo-brand.svg"
-          alt="logo"
+          alt="CloudVault"
           width={52}
           height={52}
           className="lg:hidden"
@@ -55,7 +61,7 @@ const Sidebar = ({ navItems, isAdmin = false }: SidebarInterface) => {
               >
                 <Image
                   src={icon}
-                  alt={name}
+                  alt=""
                   width={24}
                   height={24}
                   className={cn(
@@ -70,13 +76,17 @@ const Sidebar = ({ navItems, isAdmin = false }: SidebarInterface) => {
         </ul>
       </nav>
 
-      <Image
-        src="/assets/images/files-2.svg"
-        alt="logo"
-        width={200}
-        height={218}
-        className="w-full"
-      />
+      <div className="hidden rounded-2xl border border-vault-600/15 bg-vault-600/5 p-4 dark:border-vault-400/15 dark:bg-vault-400/5 lg:block">
+        <div className="mb-2 flex size-8 items-center justify-center rounded-full bg-vault-600/10 text-vault-600 dark:text-vault-300">
+          <ShieldCheck className="size-4" aria-hidden="true" />
+        </div>
+        <p className="text-body-sm font-medium text-ink-800 dark:text-ink-100">
+          Your files, encrypted in transit.
+        </p>
+        <p className="mt-1 text-caption text-muted-foreground">
+          Folders, trash and shares — all in one vault.
+        </p>
+      </div>
     </aside>
   );
 };

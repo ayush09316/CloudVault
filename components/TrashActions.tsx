@@ -59,7 +59,7 @@ const TrashActions = ({ file }: { file: FileDocument }) => {
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="shad-dialog button">
           <DialogHeader>
-            <DialogTitle className="text-center text-light-100">
+            <DialogTitle className="text-center text-light-100 dark:text-ink-200">
               Delete forever
             </DialogTitle>
             <p className="delete-confirmation">

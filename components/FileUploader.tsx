@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
@@ -89,12 +89,22 @@ const FileUploader = ({ className }: Props) => {
     [parentId, path]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: false,
+  });
+
+  useEffect(() => {
+    const handler = () => open();
+    window.addEventListener('cloudvault:upload', handler);
+    return () => window.removeEventListener('cloudvault:upload', handler);
+  }, [open]);
 
   const handleRemoveFile = (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     fileName: string
   ) => {
+    e.preventDefault();
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
@@ -113,7 +123,7 @@ const FileUploader = ({ className }: Props) => {
       </Button>
       {files?.length > 0 && (
         <ul className="uploader-preview-list">
-          <h4 className="h4 text-light-100">Uploading</h4>
+          <h4 className="h4 text-light-100 dark:text-ink-200">Uploading</h4>
 
           {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
@@ -141,13 +151,20 @@ const FileUploader = ({ className }: Props) => {
                   </div>
                 </div>
 
-                <Image
-                  src="/assets/icons/remove.svg"
-                  width={24}
-                  height={24}
-                  alt="Remove"
+                <button
+                  type="button"
+                  aria-label={`Remove ${file.name} from the upload queue`}
                   onClick={(e) => handleRemoveFile(e, file.name)}
-                />
+                  className="rounded-full p-1 transition-colors hover:bg-light-300 dark:bg-ink-800 dark:hover:bg-ink-700"
+                >
+                  <Image
+                    src="/assets/icons/remove.svg"
+                    width={24}
+                    height={24}
+                    alt=""
+                    className="dark:invert"
+                  />
+                </button>
               </li>
             );
           })}

@@ -19,8 +19,8 @@ test('signs in with an email code', async ({ page, user }) => {
   await page.keyboard.type(code, { delay: 50 });
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
-  await expect(page.getByText('Recent files uploaded')).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 30_000 });
+  await expect(page.getByText('Recent files')).toBeVisible();
 });
 
 test('uploads into a nested folder and generates a thumbnail', async ({

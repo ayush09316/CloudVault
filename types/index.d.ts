@@ -60,6 +60,8 @@ declare interface ActivityEntry {
   actorId: string;
   actorName: string;
   meta: Record<string, unknown> | null;
+  fileId?: string;
+  fileName?: string;
 }
 
 declare interface FileListResult {

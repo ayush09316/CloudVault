@@ -745,3 +745,63 @@ export const getFileActivity = async (
     };
   });
 };
+
+export const getRecentActivityForCurrentUser = async (
+  limit = 8
+): Promise<ActivityEntry[]> => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return [];
+
+  const { databases } = await createAdminClient();
+
+  const ownedFiles = await listAll<FileDocument>(
+    appwriteConfig.filesCollectionId,
+    [Query.equal('owner', [currentUser.$id])]
+  );
+  if (ownedFiles.length === 0) return [];
+
+  const fileNames = new Map(ownedFiles.map((f) => [f.$id, f.name]));
+  const fileIds = ownedFiles.map((f) => f.$id).slice(0, 100);
+
+  const res = await databases.listDocuments(
+    appwriteConfig.databaseId,
+    appwriteConfig.activityCollectionId,
+    [Query.equal('fileId', fileIds), Query.orderDesc('at'), Query.limit(limit)]
+  );
+
+  const actorIds = [
+    ...new Set(
+      res.documents
+        .map((d) => d.actorId as string)
+        .filter((id) => !id.startsWith('share:'))
+    ),
+  ];
+  const names = new Map<string, string>();
+  if (actorIds.length > 0) {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal('$id', actorIds), Query.limit(100)]
+    );
+    users.documents.forEach((u) => names.set(u.$id, u.fullName));
+  }
+
+  return res.documents.map((d) => {
+    let meta: Record<string, unknown> | null = null;
+    try {
+      meta = d.meta ? JSON.parse(d.meta) : null;
+    } catch {
+      meta = null;
+    }
+    return {
+      $id: d.$id,
+      action: d.action,
+      at: d.at,
+      actorId: d.actorId,
+      actorName: describeActor(d.actorId, names),
+      meta,
+      fileId: d.fileId,
+      fileName: fileNames.get(d.fileId) ?? 'Unknown file',
+    };
+  });
+};

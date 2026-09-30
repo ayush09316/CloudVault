@@ -44,12 +44,14 @@ const FileCard = ({
           <p className="subtitle-2 line-clamp-1">{file.name}</p>
         </div>
         <div className=" flex w-1/2 justify-between">
-          <p className="body-2 text-light-200">By : {file.owner?.fullName}</p>
+          <p className="body-2 text-light-200 dark:text-ink-400">
+            By : {file.owner?.fullName}
+          </p>
           <FormattedDateTime
             date={mode === 'trash' ? file.deletedAt || '' : file.$createdAt}
             className="body-2"
           />
-          <p className="body-2 text-light-200">
+          <p className="body-2 text-light-200 dark:text-ink-400">
             {file.isFolder ? 'Folder' : `size : ${convertFileSize(file.size)}`}
           </p>
         </div>

@@ -29,7 +29,7 @@ const ProfileDropDown = ({ avatar, email, fullName }: ProfileProps) => {
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="hidden lg:block">
-        <DropdownMenuLabel className="text-[16px] text-brand">
+        <DropdownMenuLabel className="text-[16px] text-brand dark:text-vault-300">
           My Profile
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

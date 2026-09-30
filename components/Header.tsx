@@ -3,6 +3,8 @@ import Search from '@/components/Search';
 import FileUploader from '@/components/FileUploader';
 
 import ProfileDropDown from './ProfileDropDown';
+import ThemeToggle from './ThemeToggle';
+import CommandPaletteTrigger from './CommandPaletteTrigger';
 
 const Header = ({
   fullName,
@@ -17,6 +19,8 @@ const Header = ({
     <header className="header">
       <Search />
       <div className="header-wrapper">
+        <CommandPaletteTrigger />
+        <ThemeToggle />
         <FileUploader />
 
         <div className="sidebar-user-info">

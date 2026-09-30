@@ -122,7 +122,7 @@ const SelectionToolbar = ({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-3 rounded-xl bg-white p-3 shadow-drop-1"
+      className="flex flex-wrap items-center gap-3 rounded-xl bg-white p-3 shadow-drop-1 dark:bg-ink-900"
       data-testid="selection-toolbar"
     >
       <p className="subtitle-2">{selected.length} selected</p>
@@ -147,7 +147,7 @@ const SelectionToolbar = ({
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
         <DialogContent className="shad-dialog button">
           <DialogHeader>
-            <DialogTitle className="text-center text-light-100">
+            <DialogTitle className="text-center text-light-100 dark:text-ink-200">
               Move {selected.length} item(s)
             </DialogTitle>
           </DialogHeader>

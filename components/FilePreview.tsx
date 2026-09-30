@@ -45,7 +45,7 @@ export const FilePreviewBody = ({
       {kind === 'audio' && <audio src={src} controls className="w-full" />}
       {kind === 'pdf' && <PdfViewer src={src} />}
       {kind === 'none' && (
-        <p className="body-2 text-center text-light-100">
+        <p className="body-2 text-center text-light-100 dark:text-ink-200">
           No preview is available for .{file.extension || 'unknown'} files.
         </p>
       )}
@@ -70,7 +70,7 @@ const FilePreview = ({
       {file && (
         <>
           <DialogHeader>
-            <DialogTitle className="line-clamp-1 text-center text-light-100">
+            <DialogTitle className="line-clamp-1 text-center text-light-100 dark:text-ink-200">
               {file.name}
             </DialogTitle>
             <DialogDescription className="sr-only">

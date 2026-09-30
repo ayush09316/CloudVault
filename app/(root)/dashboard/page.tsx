@@ -1,12 +1,16 @@
-import { getFiles, getTotalSpaceUsed } from '@/lib/actions/file.actions';
+import {
+  getFiles,
+  getRecentActivityForCurrentUser,
+  getTotalSpaceUsed,
+} from '@/lib/actions/file.actions';
 import { getUsageSummary } from '@/lib/utils';
 import DashboardContent from '@/components/Dashboard';
 
 const Dashboard = async () => {
-  // Parallel requests
-  const [files, totalSpace] = await Promise.all([
-    getFiles({ types: [], limit: 10 }),
+  const [files, totalSpace, activity] = await Promise.all([
+    getFiles({ types: [], limit: 8 }),
     getTotalSpaceUsed(),
+    getRecentActivityForCurrentUser(8),
   ]);
 
   const usageSummary = getUsageSummary(totalSpace);
@@ -16,6 +20,7 @@ const Dashboard = async () => {
       files={files ?? { documents: [] }}
       totalSpace={totalSpace}
       usageSummary={usageSummary}
+      activity={activity}
     />
   );
 };
