@@ -117,10 +117,22 @@ const config: Config = {
         sans: ['var(--font-inter)', 'var(--font-poppins)', 'sans-serif'],
       },
       fontSize: {
-        display: ['4rem', { lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: '700' }],
-        'display-sm': ['2.75rem', { lineHeight: '1.08', letterSpacing: '-0.02em', fontWeight: '700' }],
-        h1: ['2.125rem', { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '700' }],
-        h2: ['1.5rem', { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '700' }],
+        display: [
+          '4rem',
+          { lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        'display-sm': [
+          '2.75rem',
+          { lineHeight: '1.08', letterSpacing: '-0.02em', fontWeight: '700' },
+        ],
+        h1: [
+          '2.125rem',
+          { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '700' },
+        ],
+        h2: [
+          '1.5rem',
+          { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '700' },
+        ],
         h3: ['1.25rem', { lineHeight: '1.35', fontWeight: '600' }],
         h4: ['1.125rem', { lineHeight: '1.3', fontWeight: '600' }],
         h5: ['1rem', { lineHeight: '1.5', fontWeight: '600' }],
@@ -128,7 +140,14 @@ const config: Config = {
         body: ['0.9375rem', { lineHeight: '1.55', fontWeight: '400' }],
         'body-sm': ['0.875rem', { lineHeight: '1.45', fontWeight: '400' }],
         caption: ['0.75rem', { lineHeight: '1.4', fontWeight: '400' }],
-        overline: ['0.625rem', { lineHeight: '0.875rem', letterSpacing: '0.04em', fontWeight: '500' }],
+        overline: [
+          '0.625rem',
+          {
+            lineHeight: '0.875rem',
+            letterSpacing: '0.04em',
+            fontWeight: '500',
+          },
+        ],
       },
       spacing: {
         '4.5': '1.125rem',
@@ -142,7 +161,8 @@ const config: Config = {
         'drop-2': '0 8px 30px 0 rgba(65, 89, 214, 0.3)',
         'drop-3': '0 8px 30px 0 rgba(65, 89, 214, 0.1)',
         soft: '0 1px 2px rgba(10, 13, 12, 0.04), 0 8px 24px -12px rgba(10, 13, 12, 0.12)',
-        'soft-lg': '0 2px 4px rgba(10, 13, 12, 0.04), 0 24px 48px -16px rgba(10, 13, 12, 0.18)',
+        'soft-lg':
+          '0 2px 4px rgba(10, 13, 12, 0.04), 0 24px 48px -16px rgba(10, 13, 12, 0.18)',
         'ring-vault': '0 0 0 3px rgba(14, 122, 110, 0.18)',
       },
       borderRadius: {
