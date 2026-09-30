@@ -22,7 +22,6 @@ const setCookie = async (name: string, value: string, options = {}) => {
     maxAge: 60 * 60 * 24,
     ...options,
   });
-  console.log('Cookie set', name, value);
 };
 
 const deleteCookie = async (name: string) => {
