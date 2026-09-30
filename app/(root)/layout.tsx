@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { Toaster } from '@/components/ui/toaster';
 import { adminNavItems, navItems } from '@/constants';
 import CommandPalette from '@/components/CommandPalette';
+import DropOverlay from '@/components/DropOverlay';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,6 +31,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       </section>
 
       <CommandPalette navItems={items} />
+      <DropOverlay />
       <Toaster />
     </main>
   );

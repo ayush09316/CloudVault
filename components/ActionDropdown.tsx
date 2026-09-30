@@ -22,11 +22,16 @@ import { actionsDropdownItems } from '@/constants';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { deleteFile, renameFile } from '@/lib/actions/file.actions';
+import {
+  deleteFile,
+  renameFile,
+  restoreFile,
+} from '@/lib/actions/file.actions';
 import { usePathname } from 'next/navigation';
 import { FileDetails, ShareInput } from '@/components/ActionsModalContent';
 import { fileContentUrl } from '@/lib/preview';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { ActionType, FileDocument } from '@/types';
 
 const FOLDER_ACTIONS = ['rename', 'details', 'delete'];
@@ -65,7 +70,22 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
 
     try {
       const success = await actions[action.value as keyof typeof actions]();
-      if (success) closeAllModals();
+      if (success) {
+        closeAllModals();
+        if (action.value === 'delete') {
+          toast({
+            description: `Moved "${file.name}" to trash.`,
+            action: (
+              <ToastAction
+                altText="Undo"
+                onClick={() => restoreFile({ fileId: file.$id, path })}
+              >
+                Undo
+              </ToastAction>
+            ),
+          });
+        }
+      }
     } catch {
       toast({
         description: `Failed to ${action.value} ${file.name}.`,

@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useDropzone } from 'react-dropzone';
+import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, convertFileToUrl, getFileType } from '@/lib/utils';
 import Image from 'next/image';
@@ -16,24 +17,40 @@ interface Props {
   className?: string;
 }
 
+type QueueStatus = 'uploading' | 'done';
+type QueueItem = { file: File; status: QueueStatus };
+
 const FileUploader = ({ className }: Props) => {
   const path = usePathname();
   const searchParams = useSearchParams();
   const parentId = path === '/files' ? searchParams.get('folder') : null;
   const { toast } = useToast();
-  const [files, setFiles] = useState<File[]>([]);
+  const [queue, setQueue] = useState<QueueItem[]>([]);
+
+  const remove = (name: string) =>
+    setQueue((prev) => prev.filter((q) => q.file.name !== name));
+
+  const markDone = (name: string) => {
+    setQueue((prev) =>
+      prev.map((q) => (q.file.name === name ? { ...q, status: 'done' } : q))
+    );
+    setTimeout(() => remove(name), 900);
+  };
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
+      setQueue((prev) => [
+        ...prev,
+        ...acceptedFiles.map((file) => ({
+          file,
+          status: 'uploading' as const,
+        })),
+      ]);
 
       const uploadPromises = acceptedFiles.map(async (file) => {
         try {
           if (file.size > MAX_FILE_SIZE) {
-            setFiles((prevFiles) =>
-              prevFiles.filter((f) => f.name !== file.name)
-            );
-
+            remove(file.name);
             return toast({
               description: (
                 <p className="body-2 text-white">
@@ -45,15 +62,9 @@ const FileUploader = ({ className }: Props) => {
             });
           }
 
-          const uploadedFile = await uploadFile({
-            file,
-            parentId,
-            path,
-          });
+          const uploadedFile = await uploadFile({ file, parentId, path });
           if (uploadedFile && 'error' in uploadedFile) {
-            setFiles((prevFiles) =>
-              prevFiles.filter((f) => f.name !== file.name)
-            );
+            remove(file.name);
             return toast({
               description: (
                 <p className="body-2 text-white">{uploadedFile.error}</p>
@@ -61,16 +72,10 @@ const FileUploader = ({ className }: Props) => {
               className: 'error-toast',
             });
           }
-          if (uploadedFile) {
-            setFiles((prevFiles) =>
-              prevFiles.filter((f) => f.name !== file.name)
-            );
-          }
+          if (uploadedFile) markDone(file.name);
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
-          setFiles((prevFiles) =>
-            prevFiles.filter((f) => f.name !== file.name)
-          );
+          remove(file.name);
           toast({
             description: (
               <p className="body-2 text-white">
@@ -92,6 +97,7 @@ const FileUploader = ({ className }: Props) => {
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     noClick: false,
+    noDrag: true,
   });
 
   useEffect(() => {
@@ -100,13 +106,23 @@ const FileUploader = ({ className }: Props) => {
     return () => window.removeEventListener('cloudvault:upload', handler);
   }, [open]);
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ files: File[] }>).detail;
+      if (detail?.files?.length) onDrop(detail.files);
+    };
+    window.addEventListener('cloudvault:files-dropped', handler);
+    return () =>
+      window.removeEventListener('cloudvault:files-dropped', handler);
+  }, [onDrop]);
+
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     fileName: string
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+    remove(fileName);
   };
 
   return (
@@ -121,18 +137,28 @@ const FileUploader = ({ className }: Props) => {
         />{' '}
         <p>Upload</p>
       </Button>
-      {files?.length > 0 && (
-        <ul className="uploader-preview-list">
-          <h4 className="h4 text-light-100 dark:text-ink-200">Uploading</h4>
+      {queue.length > 0 && (
+        <ul className="uploader-preview-list" data-testid="upload-tray">
+          <h4 className="h4 text-light-100 dark:text-ink-200">
+            {queue.some((q) => q.status === 'uploading')
+              ? 'Uploading'
+              : 'Upload complete'}
+          </h4>
 
-          {files.map((file, index) => {
+          {queue.map(({ file, status }, index) => {
             const { type, extension } = getFileType(file.name);
 
             return (
               <li
                 key={`${file.name}-${index}`}
-                className="uploader-preview-item"
+                className="uploader-preview-item relative overflow-hidden"
               >
+                {status === 'uploading' && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-0 h-0.5 animate-pulse bg-vault-600 dark:bg-vault-400"
+                  />
+                )}
                 <div className="flex items-center gap-3">
                   <Thumbnail
                     type={type}
@@ -142,29 +168,26 @@ const FileUploader = ({ className }: Props) => {
 
                   <div className="preview-item-name">
                     {file.name}
-                    <Image
-                      src="/assets/icons/file-loader.gif"
-                      width={80}
-                      height={26}
-                      alt="Loader"
-                    />
+                    <p className="text-caption text-muted-foreground">
+                      {status === 'uploading' ? 'Uploading…' : 'Done'}
+                    </p>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  aria-label={`Remove ${file.name} from the upload queue`}
-                  onClick={(e) => handleRemoveFile(e, file.name)}
-                  className="rounded-full p-1 transition-colors hover:bg-light-300 dark:bg-ink-800 dark:hover:bg-ink-700"
-                >
-                  <Image
-                    src="/assets/icons/remove.svg"
-                    width={24}
-                    height={24}
-                    alt=""
-                    className="dark:invert"
-                  />
-                </button>
+                {status === 'done' ? (
+                  <span className="cv-check-pop flex size-6 items-center justify-center rounded-full bg-vault-600 text-white dark:bg-vault-400 dark:text-ink-950">
+                    <Check className="size-3.5" aria-hidden="true" />
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label={`Remove ${file.name} from the upload queue`}
+                    onClick={(e) => handleRemoveFile(e, file.name)}
+                    className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-light-300 dark:hover:bg-ink-700"
+                  >
+                    <X className="size-4" aria-hidden="true" />
+                  </button>
+                )}
               </li>
             );
           })}

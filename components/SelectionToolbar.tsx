@@ -22,9 +22,11 @@ import {
   deleteFiles,
   listMyFolders,
   moveFiles,
+  restoreFile,
 } from '@/lib/actions/file.actions';
 import { fileContentUrl } from '@/lib/preview';
 import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
 import { FileDocument } from '@/types';
 
 const ROOT = '__root__';
@@ -52,6 +54,19 @@ const SelectionToolbar = ({
     try {
       await deleteFiles({ fileIds: ids, path });
       onClear();
+      toast({
+        description: `Moved ${ids.length} item(s) to trash.`,
+        action: (
+          <ToastAction
+            altText="Undo"
+            onClick={() => {
+              ids.forEach((fileId) => restoreFile({ fileId, path }));
+            }}
+          >
+            Undo
+          </ToastAction>
+        ),
+      });
     } catch {
       fail('Failed to delete the selected files.');
     } finally {

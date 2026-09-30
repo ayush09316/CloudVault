@@ -11,7 +11,7 @@ import Card from '@/components/Card';
 import FilePreview from '@/components/FilePreview';
 import SelectionToolbar from '@/components/SelectionToolbar';
 import EmptyState from '@/components/EmptyState';
-import { convertFileSize } from '@/lib/utils';
+import { cn, convertFileSize } from '@/lib/utils';
 import { getFiles } from '@/lib/actions/file.actions';
 import { FileDocument, GetFilesProps } from '@/types';
 
@@ -160,7 +160,9 @@ const FileViewer = ({
       </section>
 
       {files?.length > 0 ? (
-        <section className={isActive ? 'file-list' : 'file-stack'}>
+        <section
+          className={cn('cv-stagger', isActive ? 'file-list' : 'file-stack')}
+        >
           {files.map((file: FileDocument) => {
             const props = {
               file,

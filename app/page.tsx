@@ -9,13 +9,16 @@ import {
   Gauge,
   History,
   ArrowRight,
-  FileText,
-  ImageIcon,
-  Video,
-  File as FileIcon,
+  ShieldCheck,
+  KeyRound,
+  Lock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ThemeToggle';
+import Reveal from '@/components/Reveal';
+import SpotlightCard from '@/components/SpotlightCard';
+import AnimatedCounter from '@/components/AnimatedCounter';
+import ProductPreviewStack from '@/components/landing/ProductPreviewStack';
 
 const features = [
   {
@@ -56,37 +59,50 @@ const features = [
   },
 ];
 
-const mockFiles = [
+const securityPoints = [
   {
-    icon: FileText,
-    name: 'Q3-roadmap.pdf',
-    size: '2.4 MB',
-    color: 'text-signal-rose',
+    icon: KeyRound,
+    title: 'Role-aware sharing',
+    description:
+      'Every share link carries a view or edit role that the server enforces on each request — not just in the UI.',
   },
   {
-    icon: ImageIcon,
-    name: 'hero-shot.png',
-    size: '1.1 MB',
-    color: 'text-vault-500',
+    icon: Lock,
+    title: 'Expiring links',
+    description:
+      'Set a link to expire after a few days and it stops resolving automatically, no manual cleanup required.',
   },
   {
-    icon: Video,
-    name: 'demo-walkthrough.mp4',
-    size: '48 MB',
-    color: 'text-blue',
+    icon: ShieldCheck,
+    title: 'Ownership checks everywhere',
+    description:
+      'Rename, delete and share actions all verify you own (or were granted) the file before touching it.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Does CloudVault support nested folders?',
+    a: 'Yes — folders can contain other folders, and moving a folder brings everything inside it along.',
   },
   {
-    icon: FileIcon,
-    name: 'contract-v2.docx',
-    size: '312 KB',
-    color: 'text-orange',
+    q: 'What happens when I delete a file?',
+    a: 'It moves to Trash first. Nothing is permanently deleted until you explicitly empty the trash or delete it forever from there.',
+  },
+  {
+    q: 'Can I control who sees a shared file?',
+    a: 'Each share link is scoped to view-only or edit access, and you can set it to expire after a chosen number of days.',
+  },
+  {
+    q: 'Is there a storage limit?',
+    a: 'Yes, every account has a quota that is enforced on upload — the dashboard shows exactly how much you have used, by category.',
   },
 ];
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="container flex items-center justify-between py-6">
+    <main className="min-h-screen overflow-x-clip bg-background text-foreground">
+      <header className="container relative z-10 flex items-center justify-between py-6">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/assets/icons/logo-brand.svg"
@@ -103,151 +119,200 @@ export default function LandingPage() {
           </Button>
           <Button
             asChild
-            className="rounded-full bg-vault-600 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
+            className="cv-btn-shine rounded-full bg-vault-600 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
           >
-            <Link href="/sign-up">Get started</Link>
+            <Link href="/sign-up">
+              <span className="shine" aria-hidden="true" />
+              Get started
+            </Link>
           </Button>
         </div>
       </header>
 
-      <section className="container grid gap-12 pb-20 pt-10 lg:grid-cols-2 lg:items-center lg:pt-16">
-        <div className="flex animate-fade-up flex-col gap-6">
-          <span className="w-fit rounded-full bg-vault-600/10 px-4 py-1.5 text-body-sm font-medium text-vault-700 dark:bg-vault-400/10 dark:text-vault-300">
-            File storage that behaves like it should
-          </span>
-          <h1 className="font-display text-display-sm lg:text-display">
-            Your files,{' '}
-            <span className="text-vault-600 dark:text-vault-300">
-              actually organized.
-            </span>
-          </h1>
-          <p className="max-w-xl text-body-lg text-muted-foreground">
-            CloudVault is a storage workspace with real folders, a working
-            trash, granular sharing and instant previews — the basics every
-            other storage tool somehow gets wrong.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              asChild
-              size="lg"
-              className="rounded-full bg-vault-600 px-8 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
-            >
-              <Link href="/sign-up">
-                Create your vault
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="rounded-full px-8"
-            >
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
-          </div>
+      <section className="relative">
+        <div className="cv-aurora" aria-hidden="true">
+          <span className="a" />
+          <span className="b" />
+          <span className="c" />
         </div>
+        <div className="cv-dots absolute inset-0" aria-hidden="true" />
 
-        <div className="relative animate-fade-in">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-soft-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="size-2.5 rounded-full bg-signal-rose/70" />
-                <span className="size-2.5 rounded-full bg-signal-amber/70" />
-                <span className="size-2.5 rounded-full bg-vault-500/70" />
-              </div>
-              <span className="text-caption text-muted-foreground">
-                My Files
+        <div className="container relative z-10 grid gap-12 pb-24 pt-10 lg:grid-cols-2 lg:items-center lg:pt-16">
+          <div className="cv-reveal is-in flex flex-col gap-6">
+            <span className="w-fit rounded-full bg-vault-600/10 px-4 py-1.5 text-body-sm font-medium text-vault-700 dark:bg-vault-400/10 dark:text-vault-300">
+              File storage that behaves like it should
+            </span>
+            <h1 className="font-display text-display-sm lg:text-display">
+              Your files,{' '}
+              <span className="bg-gradient-to-r from-vault-600 via-vault-500 to-signal-amber bg-clip-text text-transparent dark:from-vault-300 dark:via-vault-400 dark:to-signal-amber">
+                actually organized.
               </span>
+            </h1>
+            <p className="max-w-xl text-body-lg text-muted-foreground">
+              CloudVault is a storage workspace with real folders, a working
+              trash, granular sharing and instant previews — the basics every
+              other storage tool somehow gets wrong.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                asChild
+                size="lg"
+                className="cv-btn-shine rounded-full bg-vault-600 px-8 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
+              >
+                <Link href="/sign-up">
+                  <span className="shine" aria-hidden="true" />
+                  Create your vault
+                  <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-full px-8"
+              >
+                <Link href="/sign-in">Sign in</Link>
+              </Button>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {mockFiles.map((f) => (
-                <div
-                  key={f.name}
-                  className="flex flex-col gap-3 rounded-xl border border-border bg-background p-3"
-                >
-                  <f.icon className={`size-6 ${f.color}`} aria-hidden="true" />
-                  <div>
-                    <p className="line-clamp-1 text-body-sm font-medium">
-                      {f.name}
-                    </p>
-                    <p className="text-caption text-muted-foreground">
-                      {f.size}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 rounded-xl bg-vault-600/5 p-3 dark:bg-vault-400/10">
-              <div className="mb-1.5 flex items-center justify-between text-caption text-muted-foreground">
-                <span>Storage used</span>
-                <span>6.4 GB of 15 GB</span>
+
+            <dl className="mt-4 grid grid-cols-3 gap-6 border-t border-border pt-6">
+              <div>
+                <dt className="text-caption text-muted-foreground">Uptime</dt>
+                <dd className="font-display text-2xl font-bold">
+                  <AnimatedCounter value={99.9} decimals={1} suffix="%" />
+                </dd>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-border">
-                <div className="h-full w-[43%] rounded-full bg-vault-600 dark:bg-vault-400" />
+              <div>
+                <dt className="text-caption text-muted-foreground">
+                  Share roles
+                </dt>
+                <dd className="font-display text-2xl font-bold">
+                  <AnimatedCounter value={2} />
+                </dd>
               </div>
-            </div>
+              <div>
+                <dt className="text-caption text-muted-foreground">
+                  Notification channels
+                </dt>
+                <dd className="font-display text-2xl font-bold">
+                  <AnimatedCounter value={0} suffix="-click" />
+                </dd>
+              </div>
+            </dl>
           </div>
-          <div className="absolute -bottom-6 -right-4 hidden rounded-xl border border-border bg-card p-3 shadow-soft sm:block">
-            <div className="flex items-center gap-2 text-body-sm">
-              <History className="size-4 text-vault-600 dark:text-vault-300" />
-              <span>Priya shared &ldquo;Q3-roadmap.pdf&rdquo;</span>
-            </div>
-          </div>
+
+          <Reveal delay={120} className="relative">
+            <ProductPreviewStack />
+          </Reveal>
         </div>
       </section>
 
       <section className="border-y border-border bg-secondary/40">
         <div className="container py-16">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
+          <Reveal className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="h2 font-display">
               Everything a storage tool needs, nothing it doesn&apos;t
             </h2>
             <p className="mt-3 text-body-lg text-muted-foreground">
               Built for teams that need more than a flat list of uploads.
             </p>
-          </div>
+          </Reveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-2xl border border-border bg-card p-6 shadow-soft transition-transform hover:-translate-y-0.5"
-              >
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={i * 60}>
+                <SpotlightCard className="cv-lift h-full rounded-2xl border border-border bg-card p-6 shadow-soft">
+                  <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-vault-600/10 text-vault-600 dark:bg-vault-400/10 dark:text-vault-300">
+                    <f.icon className="size-5" aria-hidden="true" />
+                  </div>
+                  <h3 className="h4 font-display">{f.title}</h3>
+                  <p className="mt-2 text-body-sm text-muted-foreground">
+                    {f.description}
+                  </p>
+                </SpotlightCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="container py-20">
+        <Reveal className="mx-auto mb-12 max-w-2xl text-center">
+          <h2 className="h2 font-display">
+            Permissions that are actually enforced
+          </h2>
+          <p className="mt-3 text-body-lg text-muted-foreground">
+            Sharing looks simple from the outside. Underneath, every action is
+            checked server-side.
+          </p>
+        </Reveal>
+        <div className="grid gap-5 sm:grid-cols-3">
+          {securityPoints.map((s, i) => (
+            <Reveal key={s.title} delay={i * 80}>
+              <div className="cv-lift h-full rounded-2xl border border-border bg-card p-6 shadow-soft">
                 <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-vault-600/10 text-vault-600 dark:bg-vault-400/10 dark:text-vault-300">
-                  <f.icon className="size-5" aria-hidden="true" />
+                  <s.icon className="size-5" aria-hidden="true" />
                 </div>
-                <h3 className="h4 font-display">{f.title}</h3>
+                <h3 className="h4 font-display">{s.title}</h3>
                 <p className="mt-2 text-body-sm text-muted-foreground">
-                  {f.description}
+                  {s.description}
                 </p>
               </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-secondary/40">
+        <div className="container py-20">
+          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="h2 font-display">Frequently asked</h2>
+          </Reveal>
+          <div className="mx-auto max-w-2xl divide-y divide-border rounded-2xl border border-border bg-card">
+            {faqs.map((item) => (
+              <details key={item.q} className="group px-6 py-4">
+                <summary className="body-1 flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+                  {item.q}
+                  <span className="shrink-0 text-muted-foreground transition-transform duration-300 group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-2 text-body-sm text-muted-foreground">
+                  {item.a}
+                </p>
+              </details>
             ))}
           </div>
         </div>
       </section>
 
       <section className="container py-20 text-center">
-        <h2 className="h2 font-display">Bring order to your files today</h2>
-        <p className="mx-auto mt-3 max-w-xl text-body-lg text-muted-foreground">
-          Sign up in seconds — no card required to start.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button
-            asChild
-            size="lg"
-            className="rounded-full bg-vault-600 px-8 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
-          >
-            <Link href="/sign-up">
-              Get started free
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
+        <Reveal>
+          <h2 className="h2 font-display">Bring order to your files today</h2>
+          <p className="mx-auto mt-3 max-w-xl text-body-lg text-muted-foreground">
+            Sign up in seconds — no card required to start.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button
+              asChild
+              size="lg"
+              className="cv-btn-shine rounded-full bg-vault-600 px-8 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
+            >
+              <Link href="/sign-up">
+                <span className="shine" aria-hidden="true" />
+                Get started free
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+          </div>
+        </Reveal>
       </section>
 
       <footer className="border-t border-border py-8">
         <div className="container flex flex-col items-center justify-between gap-3 text-caption text-muted-foreground sm:flex-row">
-          <span>&copy; {new Date().getFullYear()} CloudVault</span>
+          <span className="flex items-center gap-2">
+            <History className="size-3.5" aria-hidden="true" />
+            &copy; {new Date().getFullYear()} CloudVault
+          </span>
           <span>Built for teams who actually organize their files.</span>
         </div>
       </footer>
