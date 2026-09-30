@@ -64,15 +64,9 @@ export const uploadFile = async ({
       url: constructFileUrl(bucketFile.$id),
       extension: getFileType(bucketFile.name).extension,
       size: bucketFile.sizeOriginal,
-      // TODO: `owner` is written here as the raw user $id string. Every read
-      // path (Card, FileCard, ActionsModalContent -> file.owner.fullName)
-      // expects `owner` to resolve to the full user document, which only
-      // happens if the Appwrite `files` collection defines `owner` as a
-      // relationship attribute to the `users` collection (in which case
-      // passing the related document's $id here is correct and Appwrite
-      // resolves it on read). Verify this in the Appwrite console; if
-      // `owner` is actually a plain string attribute, the read paths are
-      // wrong and need an explicit users-collection lookup instead.
+      // `owner` is a relationship attribute to the `users` collection
+      // (confirmed via the Appwrite console) — passing the user's $id here
+      // is correct, and Appwrite resolves it to the full document on read.
       owner: ownerId,
       accountId,
       users: [],
