@@ -1,4 +1,6 @@
-import { FileType, TotalSpace } from '@/types';
+import { FileDocument, FileType, TotalSpace } from '@/types';
+import { usagePercentage } from '@/lib/quota';
+import { fileContentUrl, thumbnailUrl } from '@/lib/preview';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -25,10 +27,20 @@ export const convertFileSize = (sizeInBytes: number, digits?: number) => {
   }
 };
 
-export const calculatePercentage = (sizeInBytes: number) => {
-  const totalSizeInBytes = 2 * 1024 * 1024 * 1024; // 2GB in bytes
-  const percentage = (sizeInBytes / totalSizeInBytes) * 100;
-  return Number(percentage.toFixed(2));
+export const calculatePercentage = (sizeInBytes: number, quotaBytes: number) =>
+  usagePercentage(sizeInBytes, quotaBytes);
+
+export const getThumbnailSrc = (
+  file: Pick<
+    FileDocument,
+    '$id' | 'type' | 'extension' | 'thumbnailBucketFileId'
+  >,
+  token?: string | null
+) => {
+  if (file.type !== 'image' || file.extension === 'svg') return '';
+  return file.thumbnailBucketFileId
+    ? thumbnailUrl(file.$id, token)
+    : fileContentUrl(file.$id, { token });
 };
 
 export const getFileType = (fileName: string) => {
@@ -115,6 +127,7 @@ export const getFileIcon = (
   extension: string | undefined,
   type: FileType | string
 ) => {
+  if (type === 'folder') return '/assets/icons/folder.svg';
   switch (extension) {
     // Document
     case 'pdf':

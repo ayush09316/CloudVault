@@ -23,6 +23,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_APPWRITE_BUCKET: z
     .string({ required_error: 'NEXT_PUBLIC_APPWRITE_BUCKET is missing' })
     .min(1, 'NEXT_PUBLIC_APPWRITE_BUCKET is missing'),
+  NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION: z.string().min(1).default('shares'),
+  NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION: z
+    .string()
+    .min(1)
+    .default('activity'),
   NEXT_APPWRITE_KEY: z
     .string({ required_error: 'NEXT_APPWRITE_KEY is missing' })
     .min(1, 'NEXT_APPWRITE_KEY is missing'),
@@ -43,6 +48,8 @@ export const appwriteConfig = {
   databaseId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_DATABASE,
   usersCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION,
   filesCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_FILES_COLLECTION,
+  sharesCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION,
+  activityCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION,
   bucketId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_BUCKET,
   secretKey: parsedEnv.data.NEXT_APPWRITE_KEY,
 };

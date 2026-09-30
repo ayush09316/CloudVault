@@ -10,6 +10,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write '*.{js,jsx,ts,tsx,css,html}'",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "prepare": "husky"
   },
   "dependencies": {
@@ -27,9 +28,11 @@
     "clsx": "^2.1.1",
     "eslint-plugin-prettier": "^5.2.1",
     "input-otp": "^1.2.5",
+    "jszip": "^3.10.2",
     "lucide-react": "^0.454.0",
     "next": "^15.5.27",
     "node-appwrite": "^14.1.0",
+    "pdfjs-dist": "^6.3.289",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-dropzone": "^14.3.5",
@@ -45,6 +48,7 @@
     "react-dom": "$react-dom"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^20",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

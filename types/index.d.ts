@@ -15,8 +15,7 @@ declare interface SearchParamProps {
 
 declare interface UploadFileProps {
   file: File;
-  ownerId: string;
-  accountId: string;
+  parentId?: string | null;
   path: string;
 }
 
@@ -26,17 +25,47 @@ declare interface FileDocument extends Models.Document {
   type: FileType;
   extension: string;
   size: number;
-  // TODO: verify in the Appwrite console whether `owner` is a relationship
-  // attribute (resolving to the owner's user document) or a plain string
-  // storing the owner's user $id. Every read path (Card, FileCard,
-  // ActionsModalContent) accesses `owner.fullName`, so this type assumes
-  // a relationship. If the Appwrite collection schema stores `owner` as a
-  // plain string, this type and those read paths are both wrong and need
-  // a `databases.getDocument` lookup on the users collection instead.
   owner: Models.Document;
   accountId: string;
-  users: string[];
+  users?: string[];
   bucketFileId: string;
+  isFolder?: boolean | null;
+  parentId?: string | null;
+  deletedAt?: string | null;
+  thumbnailBucketFileId?: string | null;
+}
+
+declare interface UserDocument extends Models.Document {
+  fullName: string;
+  email: string;
+  avatar: string;
+  accountId: string;
+  isAdmin?: boolean | null;
+  disabled?: boolean | null;
+  quotaBytes?: number | null;
+}
+
+declare interface ShareDocument extends Models.Document {
+  fileId: string;
+  granteeEmail?: string | null;
+  role: 'view' | 'edit';
+  token?: string | null;
+  expiresAt?: string | null;
+}
+
+declare interface ActivityEntry {
+  $id: string;
+  action: string;
+  at: string;
+  actorId: string;
+  actorName: string;
+  meta: Record<string, unknown> | null;
+}
+
+declare interface FileListResult {
+  documents: FileDocument[];
+  total: number;
+  nextCursor: string | null;
 }
 
 type MediaType = {
@@ -52,6 +81,7 @@ export interface TotalSpace {
   other: MediaType;
   used: number;
   all: number;
+  trashed: number;
 }
 
 declare interface GetFilesProps {
@@ -59,22 +89,20 @@ declare interface GetFilesProps {
   searchText?: string;
   sort?: string;
   limit?: number;
-  isAdmin?: boolean;
+  cursor?: string | null;
+  parentId?: string | null;
+  scope?: 'mine' | 'all';
+  includeFolders?: boolean;
 }
 declare interface RenameFileProps {
   fileId: string;
   name: string;
   extension: string;
   path: string;
-}
-declare interface UpdateFileUsersProps {
-  fileId: string;
-  emails: string[];
-  path: string;
+  shareToken?: string;
 }
 declare interface DeleteFileProps {
   fileId: string;
-  bucketFileId: string;
   path: string;
 }
 
@@ -103,10 +131,4 @@ declare interface ThumbnailProps {
   url: string;
   className?: string;
   imageClassName?: string;
-}
-
-declare interface ShareInputProps {
-  file: FileDocument;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemove: (email: string) => void;
 }

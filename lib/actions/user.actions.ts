@@ -85,6 +85,7 @@ export const createAccount = async ({
         avatar: avatarPlaceholderUrl,
         accountId,
         isAdmin: false,
+        disabled: false,
       }
     );
 
@@ -102,7 +103,15 @@ export const verifySecret = async ({
   password: string;
 }) => {
   try {
-    const { account } = await createAdminClient();
+    const { account, databases } = await createAdminClient();
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId,
+      [Query.equal('accountId', [accountId]), Query.limit(1)]
+    );
+    if (users.documents[0]?.disabled) {
+      throw new Error('Account is disabled');
+    }
     const session = await account.createSession(accountId, password);
 
     await setCookie('appwrite-session', session.secret);
@@ -123,7 +132,8 @@ export const getCurrentUser = async () => {
       [Query.equal('accountId', result.$id)]
     );
 
-    return user.total > 0 ? parseStringify(user.documents[0]) : null;
+    if (user.total === 0 || user.documents[0].disabled) return null;
+    return parseStringify(user.documents[0]);
   } catch (error) {
     console.error('Failed to fetch current user', error);
     return null;
@@ -146,6 +156,10 @@ export const signOutUser = async () => {
 export const signInUser = async ({ email }: { email: string }) => {
   try {
     const existingUser = await getUserByEmail(email);
+
+    if (existingUser?.disabled) {
+      return parseStringify({ error: 'This account has been disabled.' });
+    }
 
     if (existingUser) {
       await sendEmailOTP({ email });
