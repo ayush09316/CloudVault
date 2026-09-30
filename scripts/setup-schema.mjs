@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-import { Client, Databases, IndexType } from "node-appwrite";
+import { Client, Databases, ID, IndexType, Query } from "node-appwrite";
 
 config({ path: ".env.local" });
 
@@ -33,6 +33,57 @@ async function waitAttr(collectionId, key) {
     await new Promise((r) => setTimeout(r, 1000));
   }
   throw new Error(`attribute ${key} on ${collectionId} never became available`);
+}
+
+async function listAll(collectionId, queries) {
+  const out = [];
+  let cursor;
+  for (;;) {
+    const page = await db.listDocuments(dbId, collectionId, [
+      ...queries,
+      Query.limit(100),
+      ...(cursor ? [Query.cursorAfter(cursor)] : []),
+    ]);
+    out.push(...page.documents);
+    if (page.documents.length < 100) return out;
+    cursor = page.documents[page.documents.length - 1].$id;
+  }
+}
+
+async function backfillNulls(collectionId, key, value) {
+  const docs = await listAll(collectionId, [Query.isNull(key), Query.select(["$id"])]);
+  for (const d of docs) {
+    await db.updateDocument(dbId, collectionId, d.$id, { [key]: value });
+  }
+  console.log(`backfilled ${collectionId}.${key} on ${docs.length} docs`);
+}
+
+// Legacy sharing stored grantee emails on files.users. Each entry becomes a
+// view-role row in `shares`; the old array is then cleared so it is never
+// read again.
+async function migrateLegacyUserShares() {
+  const docs = await listAll(filesId, [Query.isNotNull("users"), Query.select(["$id", "users"])]);
+  let migrated = 0;
+  for (const d of docs) {
+    const emails = (d.users || []).map((e) => e.trim().toLowerCase()).filter(Boolean);
+    if (emails.length === 0) continue;
+    for (const email of new Set(emails)) {
+      const existing = await db.listDocuments(dbId, "shares", [
+        Query.equal("fileId", d.$id),
+        Query.equal("granteeEmail", email),
+        Query.limit(1),
+      ]);
+      if (existing.total > 0) continue;
+      await db.createDocument(dbId, "shares", ID.unique(), {
+        fileId: d.$id,
+        granteeEmail: email,
+        role: "view",
+      });
+      migrated++;
+    }
+    await db.updateDocument(dbId, filesId, d.$id, { users: [] });
+  }
+  console.log(`migrated ${migrated} legacy files.users grants into shares`);
 }
 
 async function main() {
@@ -156,6 +207,32 @@ async function main() {
     () => db.createIndex(dbId, "activity", "fileId_idx", IndexType.Key, ["fileId"]),
     "activity.fileId_idx"
   );
+
+  await ignoreExists(
+    () => db.createBooleanAttribute(dbId, usersId, "disabled", false, false),
+    "users.disabled"
+  );
+  await waitAttr(usersId, "disabled");
+
+  await ignoreExists(
+    () => db.createStringAttribute(dbId, filesId, "thumbnailBucketFileId", 64, false),
+    "files.thumbnailBucketFileId"
+  );
+  await waitAttr(filesId, "thumbnailBucketFileId");
+
+  await ignoreExists(
+    () => db.createIndex(dbId, "shares", "granteeEmail_idx", IndexType.Key, ["granteeEmail"]),
+    "shares.granteeEmail_idx"
+  );
+  await ignoreExists(
+    () => db.createIndex(dbId, "activity", "at_idx", IndexType.Key, ["at"]),
+    "activity.at_idx"
+  );
+
+  await backfillNulls(filesId, "isFolder", false);
+  await backfillNulls(usersId, "quotaBytes", DEFAULT_QUOTA_BYTES);
+  await backfillNulls(usersId, "disabled", false);
+  await migrateLegacyUserShares();
 
   console.log("schema setup complete");
 }
