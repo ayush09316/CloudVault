@@ -36,3 +36,5 @@ test/
 src/someSpecificFile.tsx
 .husky/
 docker/
+.next-e2e/
+test-results/
