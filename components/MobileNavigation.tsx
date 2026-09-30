@@ -10,7 +10,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Separator } from '@radix-ui/react-separator';
-import { navItems } from '@/constants';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,23 +17,15 @@ import FileUploader from '@/components/FileUploader';
 import { signOutUser } from '@/lib/actions/user.actions';
 
 interface Props {
-  $id: string;
-  accountId: string;
   fullName: string;
   avatar: string;
   email: string;
+  navItems: { url: string; name: string; icon: string }[];
 }
 
-const MobileNavigation = ({
-  $id: ownerId,
-  accountId,
-  fullName,
-  avatar,
-  email,
-}: Props) => {
+const MobileNavigation = ({ fullName, avatar, email, navItems }: Props) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const isPathAdmin = pathname.includes('admin');
 
   return (
     <header className="mobile-header">
@@ -103,13 +94,7 @@ const MobileNavigation = ({
           <Separator className="my-5 bg-light-200/20" />
 
           <div className="flex flex-col justify-between gap-5 pb-5">
-            {!isPathAdmin && (
-              <FileUploader
-                ownerId={ownerId}
-                accountId={accountId}
-                className="w-full"
-              />
-            )}
+            <FileUploader className="w-full" />
 
             <Button
               type="submit"

@@ -13,7 +13,7 @@ const Dashboard = async () => {
 
   return (
     <DashboardContent
-      files={files}
+      files={files ?? { documents: [] }}
       totalSpace={totalSpace}
       usageSummary={usageSummary}
     />

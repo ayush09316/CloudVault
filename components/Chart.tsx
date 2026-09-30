@@ -28,7 +28,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const Chart = ({ used = 0 }: { used: number }) => {
+export const Chart = ({ used = 0, all }: { used: number; all: number }) => {
   const chartData = [{ storage: 'used', 10: used, fill: 'white' }];
 
   return (
@@ -38,7 +38,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
           <RadialBarChart
             data={chartData}
             startAngle={90}
-            endAngle={Number(calculatePercentage(used)) + 90}
+            endAngle={Number(calculatePercentage(used, all)) + 90}
             innerRadius={80}
             outerRadius={110}
           >
@@ -66,8 +66,8 @@ export const Chart = ({ used = 0 }: { used: number }) => {
                           y={viewBox.cy}
                           className="chart-total-percentage"
                         >
-                          {used && calculatePercentage(used)
-                            ? calculatePercentage(used)
+                          {used && calculatePercentage(used, all)
+                            ? calculatePercentage(used, all)
                                 .toString()
                                 .replace(/^0+/, '')
                             : '0'}
@@ -92,7 +92,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
       <CardHeader className="chart-details">
         <CardTitle className="chart-title">Available Storage</CardTitle>
         <CardDescription className="chart-description">
-          {used ? convertFileSize(used) : '2GB'} / 2GB
+          {convertFileSize(used)} / {convertFileSize(all)}
         </CardDescription>
       </CardHeader>
     </Card>

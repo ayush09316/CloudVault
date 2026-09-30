@@ -17,7 +17,7 @@ export const Thumbnail = ({
   imageClassName,
   className,
 }: Props) => {
-  const isImage = type === 'image' && extension !== 'svg';
+  const isImage = type === 'image' && extension !== 'svg' && !!url;
 
   return (
     <figure className={cn('thumbnail', className)}>
@@ -26,6 +26,7 @@ export const Thumbnail = ({
         alt="thumbnail"
         width={100}
         height={100}
+        unoptimized={isImage && url.startsWith('/api/')}
         className={cn(
           'size-8 object-contain',
           imageClassName,

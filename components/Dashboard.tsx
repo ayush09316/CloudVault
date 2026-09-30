@@ -1,17 +1,20 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Chart } from './Chart';
 import Link from 'next/link';
-import { convertFileSize } from '@/lib/utils';
+import { convertFileSize, getThumbnailSrc } from '@/lib/utils';
 import { FormattedDateTime } from './FormattedDateTime';
 import { Separator } from './ui/separator';
 import Thumbnail from './Thumbnail';
 import ActionDropdown from './ActionDropdown';
 import Image from 'next/image';
+import FilePreview from './FilePreview';
 import { FileDocument } from '@/types';
 
 interface DashboardProps {
   files: { documents: FileDocument[] };
-  totalSpace: { used: number };
+  totalSpace: { used: number; all: number };
   usageSummary: {
     title: string;
     size: number;
@@ -26,10 +29,12 @@ const DashboardContent = ({
   totalSpace,
   usageSummary,
 }: DashboardProps) => {
+  const [previewFile, setPreviewFile] = useState<FileDocument | null>(null);
+
   return (
     <div className="dashboard-container">
       <section>
-        <Chart used={totalSpace.used} />
+        <Chart used={totalSpace.used} all={totalSpace.all} />
 
         <ul className="dashboard-summary-list">
           {usageSummary.map((summary) => (
@@ -70,16 +75,17 @@ const DashboardContent = ({
         {files.documents?.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
             {files.documents.map((file: FileDocument) => (
-              <Link
-                href={file.url}
-                target="_blank"
-                className="flex items-center gap-3"
+              <li
+                role="button"
+                tabIndex={0}
+                onClick={() => setPreviewFile(file)}
+                className="flex cursor-pointer items-center gap-3"
                 key={file.$id}
               >
                 <Thumbnail
                   type={file.type}
                   extension={file.extension}
-                  url={file.url}
+                  url={getThumbnailSrc(file)}
                 />
 
                 <div className="recent-file-details">
@@ -90,15 +96,18 @@ const DashboardContent = ({
                       className="caption"
                     />
                   </div>
-                  <ActionDropdown file={file} />
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <ActionDropdown file={file} />
+                  </div>
                 </div>
-              </Link>
+              </li>
             ))}
           </ul>
         ) : (
           <p className="empty-list">No files uploaded</p>
         )}
       </section>
+      <FilePreview file={previewFile} onClose={() => setPreviewFile(null)} />
     </div>
   );
 };

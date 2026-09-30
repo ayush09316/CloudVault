@@ -9,6 +9,8 @@ import { Models } from 'node-appwrite';
 import Thumbnail from '@/components/Thumbnail';
 import FormattedDateTime from '@/components/FormattedDateTime';
 import { useDebounce } from 'use-debounce';
+import { getThumbnailSrc } from '@/lib/utils';
+import { FileDocument } from '@/types';
 
 const Search = () => {
   const [query, setQuery] = useState('');
@@ -30,7 +32,7 @@ const Search = () => {
       }
 
       const files = await getFiles({ types: [], searchText: debouncedQuery });
-      setResults(files.documents);
+      setResults(files?.documents ?? []);
       setOpen(true);
     };
 
@@ -101,7 +103,7 @@ const Search = () => {
                     <Thumbnail
                       type={file.type}
                       extension={file.extension}
-                      url={file.url}
+                      url={getThumbnailSrc(file as FileDocument)}
                       className="size-9 min-w-9"
                     />
                     <p className="subtitle-2 line-clamp-1 text-light-100">

@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -19,25 +20,29 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { actionsDropdownItems } from '@/constants';
 import Link from 'next/link';
-import { constructDownloadUrl } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  deleteFile,
-  renameFile,
-  updateFileUsers,
-} from '@/lib/actions/file.actions';
+import { deleteFile, renameFile } from '@/lib/actions/file.actions';
 import { usePathname } from 'next/navigation';
 import { FileDetails, ShareInput } from '@/components/ActionsModalContent';
+import { fileContentUrl } from '@/lib/preview';
+import { useToast } from '@/hooks/use-toast';
 import { ActionType, FileDocument } from '@/types';
+
+const FOLDER_ACTIONS = ['rename', 'details', 'delete'];
+
+const baseName = (file: FileDocument) =>
+  file.isFolder || !file.extension
+    ? file.name
+    : file.name.replace(new RegExp(`\\.${file.extension}$`, 'i'), '');
 
 const ActionDropdown = ({ file }: { file: FileDocument }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(file.name);
+  const [name, setName] = useState(baseName(file));
   const [isLoading, setIsLoading] = useState(false);
-  const [emails, setEmails] = useState<string[]>([]);
+  const { toast } = useToast();
 
   const path = usePathname();
 
@@ -45,42 +50,35 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
     setIsModalOpen(false);
     setIsDropdownOpen(false);
     setAction(null);
-    setName(file.name);
-    //   setEmails([]);
+    setName(baseName(file));
   };
 
   const handleAction = async () => {
     if (!action) return;
     setIsLoading(true);
-    let success = false;
 
     const actions = {
       rename: () =>
         renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => updateFileUsers({ fileId: file.$id, emails, path }),
-      delete: () =>
-        deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
+      delete: () => deleteFile({ fileId: file.$id, path }),
     };
 
-    success = await actions[action.value as keyof typeof actions]();
-
-    if (success) closeAllModals();
-
-    setIsLoading(false);
+    try {
+      const success = await actions[action.value as keyof typeof actions]();
+      if (success) closeAllModals();
+    } catch {
+      toast({
+        description: `Failed to ${action.value} ${file.name}.`,
+        className: 'error-toast',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleRemoveUser = async (email: string) => {
-    const updatedEmails = emails.filter((e) => e !== email);
-
-    const success = await updateFileUsers({
-      fileId: file.$id,
-      emails: updatedEmails,
-      path,
-    });
-
-    if (success) setEmails(updatedEmails);
-    closeAllModals();
-  };
+  const items = file.isFolder
+    ? actionsDropdownItems.filter((i) => FOLDER_ACTIONS.includes(i.value))
+    : actionsDropdownItems;
 
   const renderDialogContent = () => {
     if (!action) return null;
@@ -93,6 +91,9 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
           <DialogTitle className="text-center text-light-100">
             {label}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {label} {file.name}
+          </DialogDescription>
           {value === 'rename' && (
             <Input
               type="text"
@@ -101,21 +102,16 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
             />
           )}
           {value === 'details' && <FileDetails file={file} />}
-          {value === 'share' && (
-            <ShareInput
-              file={file}
-              onInputChange={setEmails}
-              onRemove={handleRemoveUser}
-            />
-          )}
+          {value === 'share' && <ShareInput file={file} />}
           {value === 'delete' && (
             <p className="delete-confirmation">
-              Are you sure you want to delete{` `}
-              <span className="delete-file-name">{file.name}</span>?
+              Move{` `}
+              <span className="delete-file-name">{file.name}</span> to the
+              trash?
             </p>
           )}
         </DialogHeader>
-        {['rename', 'delete', 'share'].includes(value) && (
+        {['rename', 'delete'].includes(value) && (
           <DialogFooter className="flex flex-col gap-3 md:flex-row">
             <Button onClick={closeAllModals} className="modal-cancel-button">
               Cancel
@@ -141,7 +137,10 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-        <DropdownMenuTrigger className="shad-no-focus">
+        <DropdownMenuTrigger
+          className="shad-no-focus"
+          data-testid="file-actions"
+        >
           <Image
             src="/assets/icons/dots.svg"
             alt="dots"
@@ -154,7 +153,7 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
             {file.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {actionsDropdownItems.map((actionItem) => (
+          {items.map((actionItem) => (
             <DropdownMenuItem
               key={actionItem.value}
               className="shad-dropdown-item"
@@ -172,8 +171,9 @@ const ActionDropdown = ({ file }: { file: FileDocument }) => {
             >
               {actionItem.value === 'download' ? (
                 <Link
-                  href={constructDownloadUrl(file.bucketFileId)}
+                  href={fileContentUrl(file.$id, { download: true })}
                   download={file.name}
+                  prefetch={false}
                   className="flex items-center gap-2"
                 >
                   <Image

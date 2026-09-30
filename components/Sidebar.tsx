@@ -7,16 +7,16 @@ import { cn } from '@/lib/utils';
 
 interface SidebarInterface {
   navItems: { url: string; name: string; icon: string }[];
+  isAdmin?: boolean;
 }
 
-const Sidebar = ({ navItems }: SidebarInterface) => {
+const Sidebar = ({ navItems, isAdmin = false }: SidebarInterface) => {
   const pathname = usePathname();
-  const isPathAdmin = pathname.includes('admin');
 
   return (
     <aside className="sidebar">
       <Link href="/">
-        {isPathAdmin ? (
+        {isAdmin ? (
           <Image
             src="/assets/icons/logo-full-admin.svg"
             alt="logo"

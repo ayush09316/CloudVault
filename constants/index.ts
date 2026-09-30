@@ -5,8 +5,13 @@ export const navItems = [
     url: '/',
   },
   {
-    name: 'Documents',
+    name: 'My Files',
     icon: '/assets/icons/documents.svg',
+    url: '/files',
+  },
+  {
+    name: 'Documents',
+    icon: '/assets/icons/file-document-light.svg',
     url: '/documents',
   },
   {
@@ -24,33 +29,18 @@ export const navItems = [
     icon: '/assets/icons/others.svg',
     url: '/others',
   },
+  {
+    name: 'Trash',
+    icon: '/assets/icons/delete.svg',
+    url: '/trash',
+  },
 ];
 
 export const adminNavItems = [
   {
-    name: 'Dashboard',
-    icon: '/assets/icons/dashboard.svg',
-    url: '/admin',
-  },
-  {
-    name: 'Documents',
-    icon: '/assets/icons/documents.svg',
-    url: '/admin/documents',
-  },
-  {
-    name: 'Images',
-    icon: '/assets/icons/images.svg',
-    url: '/admin/images',
-  },
-  {
-    name: 'Media',
-    icon: '/assets/icons/video.svg',
-    url: '/admin/media',
-  },
-  {
-    name: 'Others',
-    icon: '/assets/icons/others.svg',
-    url: '/admin/others',
+    name: 'Users',
+    icon: '/assets/icons/admin.svg',
+    url: '/admin/users',
   },
 ];
 

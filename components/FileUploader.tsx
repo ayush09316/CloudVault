@@ -10,16 +10,16 @@ import Thumbnail from '@/components/Thumbnail';
 import { MAX_FILE_SIZE } from '@/constants';
 import { useToast } from '@/hooks/use-toast';
 import { uploadFile } from '@/lib/actions/file.actions';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 interface Props {
-  ownerId: string;
-  accountId: string;
   className?: string;
 }
 
-const FileUploader = ({ ownerId, accountId, className }: Props) => {
+const FileUploader = ({ className }: Props) => {
   const path = usePathname();
+  const searchParams = useSearchParams();
+  const parentId = path === '/files' ? searchParams.get('folder') : null;
   const { toast } = useToast();
   const [files, setFiles] = useState<File[]>([]);
 
@@ -47,10 +47,20 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
 
           const uploadedFile = await uploadFile({
             file,
-            ownerId,
-            accountId,
+            parentId,
             path,
           });
+          if (uploadedFile && 'error' in uploadedFile) {
+            setFiles((prevFiles) =>
+              prevFiles.filter((f) => f.name !== file.name)
+            );
+            return toast({
+              description: (
+                <p className="body-2 text-white">{uploadedFile.error}</p>
+              ),
+              className: 'error-toast',
+            });
+          }
           if (uploadedFile) {
             setFiles((prevFiles) =>
               prevFiles.filter((f) => f.name !== file.name)
@@ -58,13 +68,25 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
           }
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
+          setFiles((prevFiles) =>
+            prevFiles.filter((f) => f.name !== file.name)
+          );
+          toast({
+            description: (
+              <p className="body-2 text-white">
+                Failed to upload{' '}
+                <span className="font-semibold">{file.name}</span>.
+              </p>
+            ),
+            className: 'error-toast',
+          });
         }
       });
 
       await Promise.allSettled(uploadPromises);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ownerId, accountId, path]
+    [parentId, path]
   );
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
