@@ -6,6 +6,7 @@ import { ID, Models, Query } from 'node-appwrite';
 import { constructFileUrl, getFileType, parseStringify } from '@/lib/utils';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/lib/actions/user.actions';
+import { canShare, canWrite } from '@/lib/permissions';
 import {
   DeleteFileProps,
   FileType,
@@ -18,6 +19,22 @@ import {
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
   throw error;
+};
+
+const resolveOwnerId = (owner: unknown): string => {
+  if (owner && typeof owner === 'object' && '$id' in owner) {
+    return (owner as { $id: string }).$id;
+  }
+  return owner as string;
+};
+
+const getFileOrThrow = async (fileId: string) => {
+  const { databases } = await createAdminClient();
+  return databases.getDocument(
+    appwriteConfig.databaseId,
+    appwriteConfig.filesCollectionId,
+    fileId
+  );
 };
 
 export const uploadFile = async ({
@@ -47,6 +64,15 @@ export const uploadFile = async ({
       url: constructFileUrl(bucketFile.$id),
       extension: getFileType(bucketFile.name).extension,
       size: bucketFile.sizeOriginal,
+      // TODO: `owner` is written here as the raw user $id string. Every read
+      // path (Card, FileCard, ActionsModalContent -> file.owner.fullName)
+      // expects `owner` to resolve to the full user document, which only
+      // happens if the Appwrite `files` collection defines `owner` as a
+      // relationship attribute to the `users` collection (in which case
+      // passing the related document's $id here is correct and Appwrite
+      // resolves it on read). Verify this in the Appwrite console; if
+      // `owner` is actually a plain string attribute, the read paths are
+      // wrong and need an explicit users-collection lookup instead.
       owner: ownerId,
       accountId,
       users: [],
@@ -152,9 +178,18 @@ export const renameFile = async ({
   extension,
   path,
 }: RenameFileProps) => {
-  const { databases } = await createAdminClient();
-
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error('User is not authenticated.');
+
+    const targetFile = await getFileOrThrow(fileId);
+    if (
+      !canWrite({ ownerId: resolveOwnerId(targetFile.owner) }, currentUser.$id)
+    ) {
+      throw new Error('You do not have permission to rename this file.');
+    }
+
+    const { databases } = await createAdminClient();
     const newName = `${name}.${extension}`;
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
@@ -177,9 +212,18 @@ export const updateFileUsers = async ({
   emails,
   path,
 }: UpdateFileUsersProps) => {
-  const { databases } = await createAdminClient();
-
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error('User is not authenticated.');
+
+    const targetFile = await getFileOrThrow(fileId);
+    if (
+      !canShare({ ownerId: resolveOwnerId(targetFile.owner) }, currentUser.$id)
+    ) {
+      throw new Error('You do not have permission to share this file.');
+    }
+
+    const { databases } = await createAdminClient();
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
@@ -201,9 +245,18 @@ export const deleteFile = async ({
   bucketFileId,
   path,
 }: DeleteFileProps) => {
-  const { databases, storage } = await createAdminClient();
-
   try {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) throw new Error('User is not authenticated.');
+
+    const targetFile = await getFileOrThrow(fileId);
+    if (
+      !canWrite({ ownerId: resolveOwnerId(targetFile.owner) }, currentUser.$id)
+    ) {
+      throw new Error('You do not have permission to delete this file.');
+    }
+
+    const { databases, storage } = await createAdminClient();
     const deletedFile = await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
