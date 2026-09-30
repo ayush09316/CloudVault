@@ -5,12 +5,12 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Sort from '@/components/Sort';
 import FileCard from '@/components/FileCard';
-import { Models } from 'node-appwrite';
 import { convertFileSize } from '@/lib/utils';
 import Card from './Card';
+import { FileDocument } from '@/types';
 
 type FileViewerProps = {
-  files: Models.Document[];
+  files: FileDocument[];
   totalSize: number;
   type: string;
 };
@@ -62,7 +62,7 @@ const FileViewer = ({ files, totalSize, type }: FileViewerProps) => {
 
       {files?.length > 0 ? (
         <section className={isActive ? 'file-list' : 'file-stack'}>
-          {files.map((file: Models.Document) =>
+          {files.map((file: FileDocument) =>
             isActive ? (
               <Card key={file.$id} file={file} />
             ) : (

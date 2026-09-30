@@ -1,11 +1,11 @@
-import { Models } from 'node-appwrite';
 import Link from 'next/link';
 import Thumbnail from '@/components/Thumbnail';
 import { convertFileSize } from '@/lib/utils';
 import FormattedDateTime from '@/components/FormattedDateTime';
 import ActionDropdown from '@/components/ActionDropdown';
+import { FileDocument } from '@/types';
 
-const Card = ({ file }: { file: Models.Document }) => {
+const Card = ({ file }: { file: FileDocument }) => {
   return (
     <Link href={file.url} target="_blank" className="file-card">
       <div className="flex justify-between">

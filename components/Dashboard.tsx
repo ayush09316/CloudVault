@@ -6,11 +6,11 @@ import { FormattedDateTime } from './FormattedDateTime';
 import { Separator } from './ui/separator';
 import Thumbnail from './Thumbnail';
 import ActionDropdown from './ActionDropdown';
-import { Models } from 'node-appwrite';
 import Image from 'next/image';
+import { FileDocument } from '@/types';
 
 interface DashboardProps {
-  files: { documents: Models.Document[] };
+  files: { documents: FileDocument[] };
   totalSpace: { used: number };
   usageSummary: {
     title: string;
@@ -69,7 +69,7 @@ const DashboardContent = ({
         <h2 className="h3 xl:h2 text-light-100">Recent files uploaded</h2>
         {files.documents?.length > 0 ? (
           <ul className="mt-5 flex flex-col gap-5">
-            {files.documents.map((file: Models.Document) => (
+            {files.documents.map((file: FileDocument) => (
               <Link
                 href={file.url}
                 target="_blank"

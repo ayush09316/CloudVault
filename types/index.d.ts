@@ -1,3 +1,5 @@
+import { Models } from 'node-appwrite';
+
 declare type FileType = 'document' | 'image' | 'video' | 'audio' | 'other';
 
 declare interface ActionType {
@@ -16,6 +18,25 @@ declare interface UploadFileProps {
   ownerId: string;
   accountId: string;
   path: string;
+}
+
+declare interface FileDocument extends Models.Document {
+  name: string;
+  url: string;
+  type: FileType;
+  extension: string;
+  size: number;
+  // TODO: verify in the Appwrite console whether `owner` is a relationship
+  // attribute (resolving to the owner's user document) or a plain string
+  // storing the owner's user $id. Every read path (Card, FileCard,
+  // ActionsModalContent) accesses `owner.fullName`, so this type assumes
+  // a relationship. If the Appwrite collection schema stores `owner` as a
+  // plain string, this type and those read paths are both wrong and need
+  // a `databases.getDocument` lookup on the users collection instead.
+  owner: Models.Document;
+  accountId: string;
+  users: string[];
+  bucketFileId: string;
 }
 
 type MediaType = {
@@ -85,7 +106,7 @@ declare interface ThumbnailProps {
 }
 
 declare interface ShareInputProps {
-  file: Models.Document;
+  file: FileDocument;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: (email: string) => void;
 }
