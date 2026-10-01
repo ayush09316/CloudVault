@@ -1,115 +1,126 @@
 <div align="center">
   <br />
-      <img src="/public/banner.png" alt="Project Banner">
-  <br />
+  <img src="public/banner.png" alt="CloudVault — Files in order. Links on a timer." width="900" />
+  <br /><br />
 
-  <div>
-     <img src="https://img.shields.io/badge/-Next_JS-black?style=for-the-badge&logoColor=white&logo=nextdotjs&color=000000" alt="nextdotjs" />
-    <img src="https://img.shields.io/badge/-TypeScript-black?style=for-the-badge&logoColor=white&logo=typescript&color=3178C6" alt="typescript" />
-    <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
-    <img src="https://img.shields.io/badge/-Appwrite-black?style=for-the-badge&logoColor=white&logo=appwrite&color=FD366E" alt="appwrite" />
-  </div>
+  <img src="https://img.shields.io/badge/-Next.js_15-black?style=for-the-badge&logoColor=white&logo=nextdotjs&color=000000" alt="Next.js" />
+  <img src="https://img.shields.io/badge/-React_19-black?style=for-the-badge&logoColor=white&logo=react&color=149ECA" alt="React" />
+  <img src="https://img.shields.io/badge/-TypeScript-black?style=for-the-badge&logoColor=white&logo=typescript&color=3178C6" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/-Appwrite-black?style=for-the-badge&logoColor=white&logo=appwrite&color=FD366E" alt="Appwrite" />
+  <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/-Vitest-black?style=for-the-badge&logoColor=white&logo=vitest&color=6E9F18" alt="Vitest" />
+  <img src="https://img.shields.io/badge/-Playwright-black?style=for-the-badge&logoColor=white&logo=playwright&color=2EAD33" alt="Playwright" />
 
-<h3 align="center">Storage and File Sharing Platform</h3>
+  <h3>File storage with nested folders, a restorable trash, and share links that expire.</h3>
 
+  <a href="https://cloud-vault-theta.vercel.app/"><strong>Live demo →</strong></a>
 </div>
 
-## 📋 <a name="table">Table of Contents</a>
+## Contents
 
-1. 📊 [Overview](#overview)
-2. 🤖 [Introduction](#introduction)
-3. ⚙️ [Tech Stack](#tech-stack)
-4. 🔋 [Features](#features)
-5. 🤸 [Quick Start](#quick-start)
-6. 🛠️ [Dockerization and Kubernetes Deployment](#dockerization-and-kubernetes-deployment)
+1. [Overview](#overview)
+2. [Features](#features)
+3. [How permissions work](#how-permissions-work)
+4. [Tech stack](#tech-stack)
+5. [Project structure](#project-structure)
+6. [Quick start](#quick-start)
+7. [Testing](#testing)
+8. [Deployment](#deployment)
+9. [Known limitations](#known-limitations)
 
-## <a name="overview">🤖 Overview</a>
+## Overview
 
-![Screenshot 2024-11-26 183826](https://github.com/user-attachments/assets/87b2e868-0016-41ec-ba86-ad32efa7b4b3)
-![Screenshot 2024-11-26 184636](https://github.com/user-attachments/assets/22f2e3f9-2083-4388-9efe-2f359ebfc7a0)
+CloudVault is a Drive-style file manager built on the Next.js 15 App Router and Appwrite. You sign in with an email code, upload files into nested folders, preview them in the browser, and share them — with specific people as viewers or editors, or with anyone who has a link that expires when you choose.
 
+Every permission is enforced on the server. The UI hides what you can't do, but the server re-checks ownership and share roles before every mutation, so a crafted request can't touch a file you don't have access to.
 
-## <a name="introduction">🤖 Introduction</a>
+It started as a course project and was rebuilt end to end: a security fix for the permission model, a real sharing system, trash, quotas, previews, an activity log, a full redesign, and a unit + end-to-end test suite.
 
-A storage management and file sharing platform that lets users effortlessly upload, organize, and share files. Built with the latest Next.js 15 and the Appwrite Node SDK, utilizing advanced features for seamless file management.
+## Features
 
-This application is dockerized, deployed on Kubernetes, and follows a CI/CD pipeline managed through GitHub Actions. We ensure code quality and consistency using ESLint, Prettier, and Husky hooks for seamless development.
+**Files and folders**
+- Nested folders with breadcrumbs, move-to-folder, and folder-aware uploads
+- Drag-and-drop uploads anywhere in the window, with a Drive-style upload tray (progress, cancel, retry)
+- List view with sortable columns and a right-click menu; grid view with real thumbnails
+- Multi-select with checkboxes, shift-click ranges, ⌘/Ctrl-click and ⌘A, plus a floating toolbar for move, zip download and trash
+- Undo on destructive actions
 
+**Trash**
+- Delete is a soft delete — items go to `/trash` and can be restored
+- Trashing a folder cascades to its contents; permanent delete is a separate, explicit action
 
-## <a name="tech-stack">⚙️ Tech Stack</a>
+**Sharing**
+- Invite people by email as **viewers** or **editors**, change or remove their access later
+- "Anyone with the link" sharing with a view/edit role and an expiry of 1 day, 7 days, 30 days, a custom date, or never
+- Links can be revoked; expired or revoked links stop working immediately
+- Public `/share/[token]` page that works without signing in
 
-- **React 19**
-- **Next.js 15**
-- **Appwrite** (Authentication, File Storage)
-- **TailwindCSS**
-- **ShadCN**
-- **TypeScript**
-- **Docker** (for containerization)
-- **Kubernetes** (for deployment)
-- **GitHub Actions** (for CI/CD pipeline)
-- **ESLint** (for linting)
-- **Prettier** (for code formatting)
-- **Husky** (for Git hooks)
+**Previews**
+- Full-screen previewer with prev/next and keyboard arrows
+- Images (with zoom and pan), video, audio and PDF (paged), plus a details/activity side panel
+- Server-generated 256px WebP thumbnails for images (via `sharp`)
 
-## <a name="features">🔋 Features</a>
+**Workspace**
+- Dashboard with storage used vs. quota (split by documents, images, media, others), recent files and recent activity
+- **Enforced storage quota** — uploads that would exceed it are rejected on the server (2 GB default, 50 MB per file)
+- Fulltext, paginated search
+- **Activity log** — uploads, renames, moves, trash/restore, permanent deletes, folder creation, shares and unshares
+- **⌘K command palette** for search, navigation and actions; keyboard shortcuts throughout
+- Light and dark themes, responsive down to mobile, reduced-motion support
 
-👉 **User Authentication with Appwrite**: Implement signup, login, and logout functionality using Appwrite's authentication system.
+**Admin**
+- Admins can view all files and manage users: usage vs. quota per user, and disable/enable accounts (disabled users can't sign in)
 
-👉 **FIle Uploads**: Effortlessly upload a variety of file types, including documents, images, videos, and audio, ensuring all your important data.
+## How permissions work
 
-👉 **View and Manage Files**: Users can browse through their uploaded files stored in Appwrite storage, view on a new tab, rename file or delete.
+All file mutations run as Next.js Server Actions using an Appwrite API key, which bypasses Appwrite's own document permissions. So the server is the single source of truth for access:
 
-👉 **Download Files**: Users can download their uploaded files giving them instant access to essential documents.
+- `lib/permissions.ts` holds small **pure functions** — `canRead`, `canWrite`, `canShare` — that take a file, the caller and their share grants and return a decision. No network calls, so they are unit-tested exhaustively.
+- Every action (rename, move, trash, restore, delete, share) loads the file, resolves the caller's role (owner, editor, viewer, link holder, or none) and calls the right check **before** writing anything.
+- Shares live in their own `shares` collection (`fileId`, `granteeEmail` or `token`, `role`, `expiresAt`), so a share is a row you can reason about, revoke and test.
+- Owner identity on upload comes from the session, never from a client-supplied field.
 
-👉 **File Sharing**: Users can easily share their uploaded files with others, enabling collaboration and easy access to important content.
+## Tech stack
 
-👉 **Dashboard**: Gain insights at a glance with a dynamic dashboard that showcases total and consumed storage, recent uploads, and a summary of files grouped by type.
+- **Next.js 15** (App Router, Server Actions, Route Handlers) and **React 19**
+- **TypeScript** in strict mode, with type and lint errors failing the build
+- **Appwrite** — auth (email OTP), database, storage
+- **Tailwind CSS** with a custom token system, **Radix UI** primitives, `cmdk`, `pdfjs-dist`, `jszip`, `sharp`
+- **zod** for environment and input validation
+- **Vitest** (unit) and **Playwright** (end-to-end)
+- **ESLint**, **Prettier** and **Husky** pre-commit hooks
 
-👉 **Global Search**: Users can quickly find files and shared content across the platform with a robust global search feature.
+## Project structure
 
-👉 **Sorting Options**: Organize files efficiently by sorting them by date, name, or size, making file management a breeze.
-
-👉 **Modern Responsive Design**: A fresh and minimalist UI that emphasizes usability, ensuring a clean aesthetic across all devices.
-
-👉 **Grid and List View**:  Allow users to toggle between grid (thumbnail) and list views. Use CSS and JavaScript to switch layouts dynamically.
-
-👉 Admin platform: Empower admins with comprehensive insights, including total storage usage, recent uploads, and a summary of files categorized by type. Monitor and manage the system's performance efficiently with real-time data.
-
-and many more, including the latest **React 19**, **Next.js 15** and **Appwrite** features alongside code architecture and
-reusability
-
-## <a name="quick-start">🤸 Quick Start</a>
-
-Follow these steps to set up the project locally on your machine.
-
-**Prerequisites**
-
-Make sure you have the following installed on your machine:
-
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/en)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
-- [Docker](https://www.docker.com/products/docker-desktop) (for containerization)
-- [Kubernetes](https://kubernetes.io/) (for deployment)
-
-**Cloning the Repository**
-
-```bash
-git clone https://github.com/JavaScript-Mastery-Pro/storage_management_solution.git
-cd storage_management_solution
+```
+app/
+  page.tsx                 marketing landing page
+  (auth)/                  sign-in, sign-up (email OTP)
+  (root)/                  authenticated app: dashboard, files, [type], trash, admin/users
+  share/[token]/           public share-link page
+  api/files/[id]/          file content, thumbnails, shares (route handlers)
+components/                UI — shell, file browser, upload tray, previewer, share dialog, ui/ primitives
+lib/
+  actions/                 Server Actions (files, shares, users, admin)
+  server/                  server-only helpers: access checks, pagination, activity log
+  permissions.ts           pure permission logic (+ tests)
+  quota.ts, folders.ts, preview.ts   pure logic (+ tests)
+  appwrite/                Appwrite clients and validated config
+scripts/setup-schema.mjs   idempotent Appwrite schema setup
+e2e/                       Playwright suite
 ```
 
-**Installation**
+## Quick start
 
-Install the project dependencies using npm:
+**Prerequisites:** Node.js 24, npm, and an [Appwrite](https://appwrite.io/) project (Cloud or self-hosted) with one database, one storage bucket, and `users` and `files` collections.
 
 ```bash
+git clone https://github.com/ayush09316/CloudVault.git
+cd CloudVault
 npm install
 ```
 
-**Set Up Environment Variables**
-
-Create a new file named `.env.local` in the root of your project and add the following content:
+Create `.env.local` in the project root:
 
 ```env
 NEXT_PUBLIC_APPWRITE_ENDPOINT="https://cloud.appwrite.io/v1"
@@ -118,48 +129,57 @@ NEXT_PUBLIC_APPWRITE_DATABASE=""
 NEXT_PUBLIC_APPWRITE_USERS_COLLECTION=""
 NEXT_PUBLIC_APPWRITE_FILES_COLLECTION=""
 NEXT_PUBLIC_APPWRITE_BUCKET=""
+NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION="shares"
+NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION="activity"
 NEXT_APPWRITE_KEY=""
 ```
 
-Replace the values with your actual Appwrite credentials. You can obtain these credentials by signing up &
-creating a new project on the [Appwrite website](https://appwrite.io/).
+`NEXT_APPWRITE_KEY` is a server-only Appwrite API key — never expose it with a `NEXT_PUBLIC_` prefix.
 
-**Running the Project**
+Create the attributes, indexes and collections the app needs (safe to re-run — it skips anything that already exists):
+
+```bash
+node scripts/setup-schema.mjs
+```
+
+This adds folders (`isFolder`, `parentId`), trash (`deletedAt`), thumbnails, a fulltext index on file names, per-user `quotaBytes` and `disabled`, and the `shares` and `activity` collections.
+
+Run the app:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the project.
+Open [http://localhost:3000](http://localhost:3000).
 
+## Testing
 
-<br/>
+```bash
+npm run test       # Vitest — permission, quota, folder-path and preview logic
+npm run test:e2e   # Playwright — real flows against your Appwrite project
+npm run lint
+npm run build
+```
 
+The end-to-end suite starts its own server on port 3456, creates a throwaway user, and deletes everything it created when it finishes. It covers:
 
-## <a name="dockerization-and-kubernetes-deployment">🛠️ Dockerization and Kubernetes Deployment</a>
+- signing in with an email code
+- uploading into a nested folder and generating a thumbnail
+- trashing a file and restoring it
+- opening a share link without signing in, then revoking it
+- bulk-selecting files and moving them to trash
 
+## Deployment
 
+The live app deploys on **Vercel** from `main` (Node 24, pinned via `engines` in `package.json`). GitHub Actions runs lint and a production build on every push.
 
-**Docker Setup**
+Set the same environment variables in your Vercel project. `NEXT_APPWRITE_KEY` should be marked **Sensitive**; the `NEXT_PUBLIC_*` IDs are public by design.
 
-- Dockerfile: The application is built using a Dockerfile, which creates a Docker image of the app. This image can then be deployed to any environment that supports Docker.
-  
-**Kubernetes Deployment**
+The repo also contains a Dockerfile (`output: "standalone"`) and Kubernetes manifests in `k8s/` from an earlier experiment. They aren't part of the live deployment path.
 
-- Kubernetes: The project is deployed on Kubernetes, using a Kubernetes cluster to manage scaling, monitoring, and production deployment.
-  
-**CI/CD Pipeline**
+## Known limitations
 
-- GitHub Actions: The project integrates CI/CD through GitHub Actions, automating testing, linting, building, and deployment processes. Every push to the main branch triggers the pipeline, ensuring a seamless development workflow.
-  
-**Linting and Code Quality**
-
-- ESLint: The project uses ESLint to maintain code quality by enforcing coding standards.
-- Prettier: Prettier ensures that the code is formatted consistently across the project.
-- Husky: Husky is used for Git hooks, running pre-commit hooks to prevent errors from entering the codebase.
-  
-**Deployment Workflow**
-
-- Staging Environment: Code is automatically deployed to a staging environment for testing.
-- Production Environment: Once tested in staging, the application is deployed to the production environment.
-
+- **Upload progress is estimated**, not byte-accurate, because uploads go through Server Actions, which don't report progress and run one at a time per page. Moving uploads to a dedicated route would fix both.
+- **Search** uses Appwrite's fulltext index, which matches whole words and prefixes rather than arbitrary substrings.
+- **Thumbnails share the main storage bucket** (the Appwrite free plan caps the number of buckets) and don't count toward the quota.
+- Appwrite-level collection and bucket permissions are open; access control lives in the app layer described above.
