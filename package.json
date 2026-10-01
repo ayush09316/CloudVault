@@ -82,5 +82,8 @@
       "npm run lint",
       "npm run format"
     ]
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
