@@ -3,123 +3,102 @@
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import Image from 'next/image';
-import React, { useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { Separator } from '@radix-ui/react-separator';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { LogOut, Menu } from 'lucide-react';
 import FileUploader from '@/components/FileUploader';
 import { signOutUser } from '@/lib/actions/user.actions';
 import ThemeToggle from '@/components/ThemeToggle';
+import { BrandWordmark } from './BrandMark';
+import ShellNavList, { type NavItem } from './ShellNav';
+import ShellStorageMeter, { type StorageTotals } from './ShellStorageMeter';
+import { initials } from './ShellConstants';
 
 interface Props {
   fullName: string;
   avatar: string;
   email: string;
-  navItems: { url: string; name: string; icon: string }[];
+  navItems: NavItem[];
+  totals?: StorageTotals | null;
 }
 
-const MobileNavigation = ({ fullName, avatar, email, navItems }: Props) => {
+const MobileNavigation = ({
+  fullName,
+  avatar,
+  email,
+  navItems,
+  totals = null,
+}: Props) => {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
-    <header className="mobile-header">
-      <Image
-        src="/assets/icons/logo-full-brand.svg"
-        alt="CloudVault"
-        width={140}
-        height={35}
-        className="h-auto dark:hidden"
-      />
-      <Image
-        src="/assets/icons/logo-full-brand-dark.svg"
-        alt="CloudVault"
-        width={140}
-        height={35}
-        className="hidden h-auto dark:block"
-      />
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border bg-background/85 px-4 backdrop-blur-sm sm:hidden">
+      <Link
+        href="/dashboard"
+        aria-label="CloudVault home"
+        className="shell-focus flex items-center rounded-md"
+      >
+        <BrandWordmark markClassName="size-[22px]" />
+      </Link>
 
       <div className="flex items-center gap-1">
-        <ThemeToggle />
+        <ThemeToggle className="size-9 rounded-lg" />
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger aria-label="Open menu">
-            <Image
-              src="/assets/icons/menu.svg"
-              alt=""
-              width={30}
-              height={30}
-              className="dark:invert"
-            />
+          <SheetTrigger
+            aria-label="Open menu"
+            className="shell-focus shell-press flex size-9 items-center justify-center rounded-lg text-ink-600 hover:bg-ink-900/[0.05] dark:text-ink-300 dark:hover:bg-white/[0.06]"
+          >
+            <Menu className="size-5" aria-hidden="true" />
           </SheetTrigger>
-          <SheetContent className="shad-sheet h-screen px-3">
-            <SheetTitle>
-              <div className="header-user">
+          <SheetContent className="flex w-[86vw] max-w-[340px] flex-col gap-0 border-l border-border bg-background p-0">
+            <div className="flex items-center gap-3 border-b border-border px-4 pb-4 pt-5">
+              {avatar ? (
                 <Image
                   src={avatar}
-                  alt="avatar"
-                  width={44}
-                  height={44}
-                  className="header-user-avatar"
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="size-9 rounded-full object-cover ring-1 ring-black/5 dark:ring-white/10"
                 />
-                <div className="sm:hidden lg:block">
-                  <p className="subtitle-2 capitalize">{fullName}</p>
-                  <p className="caption">{email}</p>
-                </div>
+              ) : (
+                <span className="flex size-9 items-center justify-center rounded-full bg-ink-100 text-caption font-semibold dark:bg-ink-800">
+                  {initials(fullName)}
+                </span>
+              )}
+              <div className="min-w-0">
+                <SheetTitle className="truncate text-body-sm font-medium capitalize">
+                  {fullName}
+                </SheetTitle>
+                <SheetDescription className="truncate text-caption">
+                  {email}
+                </SheetDescription>
               </div>
-              <Separator className="mb-4 bg-light-200/20" />
-            </SheetTitle>
+            </div>
 
-            <nav className="mobile-nav">
-              <ul className="mobile-nav-list">
-                {navItems.map(({ url, name, icon }) => (
-                  <Link key={name} href={url} className="lg:w-full">
-                    <li
-                      className={cn(
-                        'mobile-nav-item',
-                        pathname === url && 'shad-active'
-                      )}
-                    >
-                      <Image
-                        src={icon}
-                        alt={name}
-                        width={24}
-                        height={24}
-                        className={cn(
-                          'nav-icon',
-                          pathname === url && 'nav-icon-active'
-                        )}
-                      />
-                      <p>{name}</p>
-                    </li>
-                  </Link>
-                ))}
-              </ul>
+            <nav aria-label="Main" className="flex-1 overflow-y-auto px-2 py-3">
+              <ShellNavList
+                items={navItems}
+                size="lg"
+                onNavigate={() => setOpen(false)}
+              />
             </nav>
 
-            <Separator className="my-5 bg-light-200/20" />
-
-            <div className="flex flex-col justify-between gap-5 pb-5">
-              <FileUploader className="w-full" />
-
-              <Button
-                type="submit"
-                className="mobile-sign-out-button"
+            <div className="flex flex-col gap-2 border-t border-border p-3">
+              <ShellStorageMeter totals={totals} />
+              <FileUploader className="!h-11 !w-full !rounded-lg !text-body !shadow-none [&_img]:size-4" />
+              <button
+                type="button"
                 onClick={async () => await signOutUser()}
+                className="shell-focus shell-press flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-border text-body font-medium text-ink-600 transition-colors hover:bg-ink-900/[0.04] dark:text-ink-300 dark:hover:bg-white/[0.05]"
               >
-                <Image
-                  src="/assets/icons/logout.svg"
-                  alt="logo"
-                  width={24}
-                  height={24}
-                />
-                <p>Logout</p>
-              </Button>
+                <LogOut className="size-4" aria-hidden="true" />
+                Sign out
+              </button>
             </div>
           </SheetContent>
         </Sheet>
