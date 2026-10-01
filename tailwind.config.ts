@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 
+const token = (name: string) => `hsl(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
   darkMode: ['class'],
   content: [
@@ -12,31 +14,28 @@ const config: Config = {
       colors: {
         // Legacy tokens kept so existing components/tests referencing them
         // (e.g. text-light-100, bg-dark-200) keep working during the
-        // visual migration — new work should prefer the vault/ink scale.
+        // visual migration. New work should use the semantic tokens below.
         brand: {
           '100': '#0E7A6E',
           DEFAULT: '#0E7A6E',
         },
-        red: '#E8604C',
-        error: '#b3271e',
-        green: '#1FAE85',
-        blue: '#3E8FD6',
-        pink: '#D98CC2',
-        orange: '#E0994F',
+        red: '#D9443A',
+        error: '#B3271E',
+        green: '#1E8F6C',
+        blue: '#3478C6',
+        pink: '#C76FA8',
+        orange: '#C9771D',
         light: {
-          '100': '#3A4046',
-          '200': '#8D9AA0',
-          '300': '#EEF2F1',
-          '400': '#F4F6F5',
+          '100': '#3A4246',
+          '200': '#7C878A',
+          '300': '#E6EAE9',
+          '400': '#F5F7F6',
         },
         dark: {
           '100': '#07110F',
-          '200': '#101B19',
+          '200': '#121816',
         },
 
-        // CloudVault design system — a deep "vault" teal paired with a
-        // warm-neutral ink scale and a signal amber for quota/attention
-        // states. This is the source of truth for new UI.
         vault: {
           '50': '#EDFBF6',
           '100': '#D2F4E9',
@@ -44,7 +43,7 @@ const config: Config = {
           '300': '#70D8B9',
           '400': '#3BBE9C',
           '500': '#199E7F',
-          '600': '#0E7A6E', // primary brand
+          '600': '#0E7A6E',
           '700': '#0C5F58',
           '800': '#0D4A46',
           '900': '#0B3B38',
@@ -66,87 +65,140 @@ const config: Config = {
           '950': '#0A0D0C',
         },
         signal: {
-          amber: '#D98F2B',
+          amber: '#C9771D',
           rose: '#D5544A',
         },
 
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: token('background'),
+        foreground: token('foreground'),
+        surface: {
+          DEFAULT: token('surface'),
+          raised: token('surface-raised'),
+          sunken: token('surface-sunken'),
+        },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: token('card'),
+          foreground: token('card-foreground'),
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: token('popover'),
+          foreground: token('popover-foreground'),
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: token('primary'),
+          foreground: token('primary-foreground'),
+          hover: token('primary-hover'),
+          soft: token('primary-soft'),
+          text: token('primary-text'),
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: token('secondary'),
+          foreground: token('secondary-foreground'),
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: token('muted'),
+          foreground: token('muted-foreground'),
         },
+        subtle: token('subtle-foreground'),
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: token('accent'),
+          foreground: token('accent-foreground'),
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: token('destructive'),
+          foreground: token('destructive-foreground'),
+          soft: token('destructive-soft'),
+          text: token('destructive-text'),
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        success: {
+          DEFAULT: token('success'),
+          foreground: token('success-foreground'),
+          soft: token('success-soft'),
+          text: token('success-text'),
+        },
+        warning: {
+          DEFAULT: token('warning'),
+          foreground: token('warning-foreground'),
+          soft: token('warning-soft'),
+          text: token('warning-text'),
+        },
+        info: {
+          DEFAULT: token('info'),
+          foreground: token('info-foreground'),
+          soft: token('info-soft'),
+          text: token('info-text'),
+        },
+        border: {
+          DEFAULT: token('border'),
+          strong: token('border-strong'),
+        },
+        input: token('input'),
+        ring: token('ring'),
+        overlay: token('overlay'),
         chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
+          '1': token('chart-1'),
+          '2': token('chart-2'),
+          '3': token('chart-3'),
+          '4': token('chart-4'),
+          '5': token('chart-5'),
         },
       },
       fontFamily: {
-        poppins: ['var(--font-poppins)'],
-        display: ['var(--font-manrope)', 'var(--font-poppins)', 'sans-serif'],
-        sans: ['var(--font-inter)', 'var(--font-poppins)', 'sans-serif'],
+        sans: [
+          'var(--font-geist-sans)',
+          'ui-sans-serif',
+          'system-ui',
+          '-apple-system',
+          'Segoe UI',
+          'sans-serif',
+        ],
+        display: ['var(--font-geist-sans)', 'ui-sans-serif', 'sans-serif'],
+        mono: [
+          'var(--font-geist-mono)',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'monospace',
+        ],
+        poppins: ['var(--font-geist-sans)', 'ui-sans-serif', 'sans-serif'],
       },
       fontSize: {
+        '2xs': ['0.6875rem', { lineHeight: '1rem' }],
         display: [
-          '4rem',
-          { lineHeight: '1.05', letterSpacing: '-0.02em', fontWeight: '700' },
+          '3.75rem',
+          { lineHeight: '1.04', letterSpacing: '-0.045em', fontWeight: '600' },
         ],
         'display-sm': [
           '2.75rem',
-          { lineHeight: '1.08', letterSpacing: '-0.02em', fontWeight: '700' },
+          { lineHeight: '1.08', letterSpacing: '-0.04em', fontWeight: '600' },
         ],
         h1: [
-          '2.125rem',
-          { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '700' },
+          '2rem',
+          { lineHeight: '1.2', letterSpacing: '-0.032em', fontWeight: '600' },
         ],
         h2: [
           '1.5rem',
-          { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '700' },
+          { lineHeight: '1.3', letterSpacing: '-0.024em', fontWeight: '600' },
         ],
-        h3: ['1.25rem', { lineHeight: '1.35', fontWeight: '600' }],
-        h4: ['1.125rem', { lineHeight: '1.3', fontWeight: '600' }],
-        h5: ['1rem', { lineHeight: '1.5', fontWeight: '600' }],
-        'body-lg': ['1.0625rem', { lineHeight: '1.6', fontWeight: '400' }],
+        h3: [
+          '1.25rem',
+          { lineHeight: '1.4', letterSpacing: '-0.018em', fontWeight: '600' },
+        ],
+        h4: [
+          '1.125rem',
+          { lineHeight: '1.4', letterSpacing: '-0.012em', fontWeight: '600' },
+        ],
+        h5: [
+          '1rem',
+          { lineHeight: '1.5', letterSpacing: '-0.006em', fontWeight: '600' },
+        ],
+        'body-lg': ['1rem', { lineHeight: '1.6', fontWeight: '400' }],
         body: ['0.9375rem', { lineHeight: '1.55', fontWeight: '400' }],
-        'body-sm': ['0.875rem', { lineHeight: '1.45', fontWeight: '400' }],
-        caption: ['0.75rem', { lineHeight: '1.4', fontWeight: '400' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.43', fontWeight: '400' }],
+        caption: ['0.75rem', { lineHeight: '1.33', fontWeight: '400' }],
         overline: [
-          '0.625rem',
-          {
-            lineHeight: '0.875rem',
-            letterSpacing: '0.04em',
-            fontWeight: '500',
-          },
+          '0.6875rem',
+          { lineHeight: '1rem', letterSpacing: '0.06em', fontWeight: '500' },
         ],
       },
       spacing: {
@@ -157,29 +209,49 @@ const config: Config = {
         '22': '5.5rem',
       },
       boxShadow: {
-        'drop-1': '0px 10px 30px 0px rgba(66, 71, 97, 0.1)',
-        'drop-2': '0 8px 30px 0 rgba(65, 89, 214, 0.3)',
-        'drop-3': '0 8px 30px 0 rgba(65, 89, 214, 0.1)',
-        soft: '0 1px 2px rgba(10, 13, 12, 0.04), 0 8px 24px -12px rgba(10, 13, 12, 0.12)',
-        'soft-lg':
-          '0 2px 4px rgba(10, 13, 12, 0.04), 0 24px 48px -16px rgba(10, 13, 12, 0.18)',
-        'ring-vault': '0 0 0 3px rgba(14, 122, 110, 0.18)',
+        xs: 'var(--shadow-xs)',
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        popover: 'var(--shadow-popover)',
+        modal: 'var(--shadow-modal)',
+        'inset-hairline': 'inset 0 0 0 1px hsl(var(--border))',
+        'drop-1': 'var(--shadow-md)',
+        'drop-2': 'var(--shadow-lg)',
+        'drop-3': 'var(--shadow-md)',
+        soft: 'var(--shadow-sm)',
+        'soft-lg': 'var(--shadow-lg)',
+        'ring-vault': '0 0 0 3px hsl(var(--ring) / 0.2)',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        xl: 'calc(var(--radius) + 6px)',
-        '2xl': 'calc(var(--radius) + 12px)',
+        xs: 'var(--radius-xs)',
+        sm: 'var(--radius-sm)',
+        DEFAULT: 'var(--radius-md)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        '3xl': 'var(--radius-3xl)',
+      },
+      transitionDuration: {
+        instant: 'var(--duration-instant)',
+        fast: 'var(--duration-fast)',
+        base: 'var(--duration-base)',
+        slow: 'var(--duration-slow)',
+        slower: 'var(--duration-slower)',
+      },
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        out: 'var(--ease-out)',
+        'in-out': 'var(--ease-in-out)',
+        emphasized: 'var(--ease-emphasized)',
       },
       keyframes: {
         'caret-blink': {
-          '0%,70%,100%': {
-            opacity: '1',
-          },
-          '20%,50%': {
-            opacity: '0',
-          },
+          '0%,70%,100%': { opacity: '1' },
+          '20%,50%': { opacity: '0' },
         },
         'fade-up': {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
@@ -189,14 +261,30 @@ const config: Config = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
-      },
-      transitionTimingFunction: {
-        spring: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        'palette-in': {
+          '0%': { opacity: '0', transform: 'translate(-50%, 0) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translate(-50%, 0) scale(1)' },
+        },
+        'palette-out': {
+          '0%': { opacity: '1', transform: 'translate(-50%, 0) scale(1)' },
+          '100%': { opacity: '0', transform: 'translate(-50%, 0) scale(0.98)' },
+        },
+        'toast-progress': {
+          '0%': { transform: 'scaleX(1)' },
+          '100%': { transform: 'scaleX(0)' },
+        },
       },
       animation: {
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
         'fade-up': 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
         'fade-in': 'fade-in 0.4s ease-out both',
+        shimmer: 'shimmer 1.6s var(--ease-in-out) infinite',
+        'palette-in': 'palette-in 180ms var(--ease-out) both',
+        'palette-out': 'palette-out 120ms var(--ease-in-out) both',
       },
     },
   },

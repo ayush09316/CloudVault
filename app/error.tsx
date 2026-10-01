@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { RotateCw } from 'lucide-react';
 
-export default function GlobalError({
+import { Button } from '@/components/ui/button';
+import { ErrorReference, StatusPage } from '@/components/ui/status-page';
+
+export default function RootError({
   error,
   reset,
 }: {
@@ -16,22 +19,22 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background p-6 text-center">
-      <div className="empty-state-icon">
-        <AlertTriangle className="size-7" aria-hidden="true" />
-      </div>
-      <h1 className="h2 font-display">Something went wrong</h1>
-      <p className="body-1 max-w-sm text-muted-foreground">
-        An unexpected error occurred. You can try again, or head back to your
-        files.
-      </p>
-      <Button
-        type="button"
-        onClick={reset}
-        className="rounded-full bg-vault-600 text-white hover:bg-vault-700 dark:bg-vault-400 dark:text-ink-950 dark:hover:bg-vault-300"
-      >
-        Try again
-      </Button>
-    </main>
+    <StatusPage
+      code="Error 500"
+      title="Something broke on our side"
+      description="Your files are safe. This page failed to load. Try again, and if it keeps happening, send us the reference below."
+      detail={<ErrorReference digest={error.digest} />}
+      actions={
+        <>
+          <Button type="button" onClick={reset}>
+            <RotateCw aria-hidden="true" />
+            Try again
+          </Button>
+          <Button asChild variant="ghost">
+            <Link href="/dashboard">Go to dashboard</Link>
+          </Button>
+        </>
+      }
+    />
   );
 }
