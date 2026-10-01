@@ -28,9 +28,13 @@ const Page = async ({ searchParams }: SearchParamProps) => {
       type={folder ? folder.name : 'My Files'}
       nextCursor={files?.nextCursor}
       query={query}
-      header={<Breadcrumbs crumbs={breadcrumbs} />}
-      toolbar={<NewFolderButton parentId={parentId} />}
-      emptyText="This folder is empty"
+      header={
+        breadcrumbs.length > 1 ? (
+          <Breadcrumbs crumbs={breadcrumbs} />
+        ) : undefined
+      }
+      toolbar={<NewFolderButton key="new-folder" parentId={parentId} />}
+      emptyVariant={folder ? 'folder' : 'root'}
     />
   );
 };
