@@ -966,10 +966,10 @@ details[open]::details-content {
 }
 
 .cvl-mono {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .cvl-eyebrow {
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -1160,7 +1160,7 @@ details[open]::details-content {
   border: 1px solid var(--cvl-line);
   border-bottom-width: 2px;
   background: hsl(var(--card));
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 11px;
   color: hsl(var(--muted-foreground));
 }
@@ -1944,4 +1944,13 @@ details[open] .cvl-faq-plus {
 }
 .cvl-anim.cvl-anim {
   animation-delay: var(--d, 0s);
+}
+.cvl-shake-2 {
+  animation: cvl-shake-2 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes cvl-shake-2 {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
 }

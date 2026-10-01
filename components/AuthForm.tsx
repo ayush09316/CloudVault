@@ -16,12 +16,15 @@ import {
 import { Input } from '@/components/ui/input';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { createAccount, signInUser } from '@/lib/actions/user.actions';
 const OtpModal = dynamic(() => import('@/components/OTPModal'), { ssr: false });
 
 type FormType = 'sign-in' | 'sign-up';
+
+const FIELD =
+  'h-11 rounded-lg border-border bg-card px-3.5 text-[14.5px] shadow-none transition-[border-color,box-shadow] placeholder:text-muted-foreground/70 focus-visible:border-vault-600/60 focus-visible:ring-4 focus-visible:ring-vault-600/10 dark:focus-visible:border-vault-400/60 dark:focus-visible:ring-vault-400/10';
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -77,100 +80,109 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   };
 
+  const isSignIn = type === 'sign-in';
+
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-          <h1 className="form-title">
-            {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex w-full flex-col"
+          noValidate
+        >
+          <p className="cvl-eyebrow">
+            {isSignIn ? 'Welcome back' : 'New vault'}
+          </p>
+          <h1 className="mt-3 font-display text-[2rem] font-semibold leading-[1.1] tracking-[-0.035em] text-foreground">
+            {isSignIn ? 'Sign in to CloudVault' : 'Create your vault'}
           </h1>
-          {type === 'sign-up' && (
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="shad-form-item">
-                    <FormLabel className="shad-form-label">Full Name</FormLabel>
+          <p className="mt-3 text-[14.5px] leading-relaxed text-muted-foreground">
+            {isSignIn
+              ? 'Enter your email and we will send you a six-digit code. No password needed.'
+              : 'Your vault starts with 2 GB of storage. We will email you a code to confirm it is you.'}
+          </p>
 
+          <div className="mt-8 space-y-4">
+            {type === 'sign-up' && (
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[13px] font-medium text-foreground">
+                      Full name
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Enter your full name"
-                        className="shad-input"
+                        autoComplete="name"
+                        className={FIELD}
                         {...field}
                       />
                     </FormControl>
-                  </div>
+                    <FormMessage className="text-[12.5px]" />
+                  </FormItem>
+                )}
+              />
+            )}
 
-                  <FormMessage className="shad-form-message" />
-                </FormItem>
-              )}
-            />
-          )}
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <div className="shad-form-item">
-                  <FormLabel className="shad-form-label">Email</FormLabel>
-
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[13px] font-medium text-foreground">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
                       placeholder="Enter your email"
-                      className="shad-input"
+                      className={FIELD}
                       {...field}
                     />
                   </FormControl>
-                </div>
+                  <FormMessage className="text-[12.5px]" />
+                </FormItem>
+              )}
+            />
+          </div>
 
-                <FormMessage className="shad-form-message" />
-              </FormItem>
-            )}
-          />
+          {errorMessage && (
+            <p
+              role="alert"
+              className="cvl-shake mt-4 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/[0.06] px-3 py-2.5 text-[13px] text-destructive"
+            >
+              <AlertCircle className="mt-px size-4 shrink-0" aria-hidden />
+              {errorMessage}
+            </p>
+          )}
 
           <Button
             type="submit"
-            className="form-submit-button"
             disabled={isLoading}
+            className="cvl-btn mt-6 h-11 w-full gap-2 rounded-lg text-[14.5px] font-medium hover:bg-foreground disabled:opacity-70"
           >
-            {type === 'sign-in' ? 'Sign In' : 'Sign Up'}
-
-            {isLoading && (
-              <Image
-                src="/assets/icons/loader.svg"
-                alt="loader"
-                width={24}
-                height={24}
-                className="ml-2 animate-spin"
-              />
+            <span className="shine" aria-hidden />
+            {isSignIn ? 'Sign in' : 'Sign up'}
+            {isLoading ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <ArrowRight className="size-4" aria-hidden />
             )}
           </Button>
 
-          {errorMessage && <p className="error-message">*{errorMessage}</p>}
-
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex w-full items-center gap-8">
-              <div className="h-px flex-1 bg-black" />
-              <span className="body-2">OR</span>
-              <div className="h-px flex-1 bg-black" />
-            </div>
-
-            <div className="body-2 flex items-center justify-center">
-              <p className="text-light-100 dark:text-ink-200">
-                {type === 'sign-in'
-                  ? "Don't have an account?"
-                  : 'Already have an account?'}
-              </p>
-              <Link
-                href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-                className="ml-1 font-medium text-brand dark:text-vault-300"
-              >
-                {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
-              </Link>
-            </div>
-          </div>
+          <p className="mt-8 border-t border-border pt-6 text-center text-[13.5px] text-muted-foreground">
+            {isSignIn ? 'New to CloudVault?' : 'Already have a vault?'}{' '}
+            <Link
+              href={isSignIn ? '/sign-up' : '/sign-in'}
+              className="cvl-accent font-medium underline-offset-4 hover:underline"
+            >
+              {isSignIn ? 'Create an account' : 'Sign in instead'}
+            </Link>
+          </p>
         </form>
       </Form>
 
