@@ -2,7 +2,7 @@ import Link from 'next/link';
 import FileViewer from '@/components/FileViewer';
 import { getFiles } from '@/lib/actions/file.actions';
 import { getCurrentUser } from '@/lib/actions/user.actions';
-import { getFileTypesParams } from '@/lib/utils';
+import { cn, getFileTypesParams } from '@/lib/utils';
 import {
   FileDocument,
   FileType,
@@ -10,9 +10,23 @@ import {
   SearchParamProps,
 } from '@/types';
 
+const scopeHref = (
+  type: string,
+  sp: Record<string, unknown>,
+  scope: 'mine' | 'all'
+) => {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(sp)) {
+    if (typeof v === 'string' && k !== 'scope') params.set(k, v);
+  }
+  if (scope === 'all') params.set('scope', 'all');
+  const qs = params.toString();
+  return qs ? `/${type}?${qs}` : `/${type}`;
+};
+
 const Page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || '';
-  const sp = await searchParams;
+  const sp = (await searchParams) ?? {};
   const searchText = (sp?.query as string) || '';
   const sort = (sp?.sort as string) || '';
   const currentUser = await getCurrentUser();
@@ -29,12 +43,27 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
   );
 
   const toolbar = currentUser?.isAdmin ? (
-    <Link
-      href={scope === 'all' ? `/${type}` : `/${type}?scope=all`}
-      className="body-2 text-brand dark:text-vault-300"
+    <div
+      role="group"
+      aria-label="Owner scope"
+      className="inline-flex items-center rounded-lg border border-border bg-card p-0.5"
     >
-      {scope === 'all' ? 'Show only mine' : 'Show all users'}
-    </Link>
+      {(['mine', 'all'] as const).map((s) => (
+        <Link
+          key={s}
+          href={scopeHref(type, sp, s)}
+          aria-current={scope === s ? 'true' : undefined}
+          className={cn(
+            'fx-focus inline-flex h-7 items-center rounded-md px-2.5 text-[12.5px] font-medium transition-colors',
+            scope === s
+              ? 'bg-ink-100 text-foreground shadow-[inset_0_0_0_1px_hsl(var(--border))] dark:bg-ink-800'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          {s === 'mine' ? 'Mine' : 'All users'}
+        </Link>
+      ))}
+    </div>
   ) : null;
 
   return (
@@ -42,7 +71,20 @@ const Page = async ({ searchParams, params }: SearchParamProps) => {
       key={`${type}-${scope}-${searchText}-${sort}`}
       files={documents}
       totalSize={totalSize}
-      type={scope === 'all' ? `${type} (all users)` : type}
+      type={searchText ? `Results for “${searchText}”` : type}
+      category={type}
+      subtitle={
+        searchText ? (
+          <>
+            {documents.length}
+            {files?.nextCursor ? '+' : ''}{' '}
+            {documents.length === 1 ? 'match' : 'matches'} in{' '}
+            <span className="capitalize">{type}</span>
+            {scope === 'all' ? ' across all users' : ''}
+          </>
+        ) : undefined
+      }
+      emptyVariant={searchText ? 'search' : 'type'}
       nextCursor={files?.nextCursor}
       query={query}
       toolbar={toolbar}

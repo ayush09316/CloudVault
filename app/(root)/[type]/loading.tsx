@@ -1,5 +1,5 @@
-import FileViewerSkeleton from '@/components/FileViewerSkeleton';
+import FileListSkeleton from '@/components/FileListSkeleton';
 
-export default function TypeLoading() {
-  return <FileViewerSkeleton />;
+export default function Loading() {
+  return <FileListSkeleton />;
 }

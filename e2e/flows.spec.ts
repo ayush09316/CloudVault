@@ -65,8 +65,11 @@ test('soft-deletes to trash and restores', async ({ authedPage: page }) => {
   await page.goto('/files');
   await uploadPng(page, file, '#00ff00');
 
-  await openAction(page, file, 'Delete');
-  await page.getByRole('button', { name: 'delete' }).click();
+  await openAction(page, file, 'Move to trash');
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Move to trash' })
+    .click();
   await expect(fileItem(page, file)).toHaveCount(0);
 
   await page.goto('/images');

@@ -15,7 +15,7 @@ const Page = async () => {
       totalSize={totalSize}
       type="Trash"
       mode="trash"
-      emptyText="Trash is empty"
+      emptyVariant="trash"
     />
   );
 };

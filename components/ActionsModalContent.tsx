@@ -415,7 +415,7 @@ export const ShareInput = ({
               onValueChange={(v) => setRole(v as 'view' | 'edit')}
             >
               <SelectTrigger
-                className="h-9 w-auto min-w-[112px] shrink-0 gap-2 whitespace-nowrap"
+                className="h-9 w-auto min-w-[112px] shrink-0 gap-2 whitespace-nowrap text-[13px]"
                 aria-label="Role for new people"
               >
                 <SelectValue />
@@ -587,7 +587,7 @@ export const ShareInput = ({
                     onValueChange={(v) => setLinkRole(v as 'view' | 'edit')}
                   >
                     <SelectTrigger
-                      className="h-9 w-auto min-w-[124px] gap-2 whitespace-nowrap"
+                      className="h-9 w-auto min-w-[124px] gap-2 whitespace-nowrap text-[13px]"
                       aria-label="Link permission"
                     >
                       <SelectValue />
@@ -599,7 +599,7 @@ export const ShareInput = ({
                   </Select>
                   <Select value={expiry} onValueChange={setExpiry}>
                     <SelectTrigger
-                      className="h-9 w-auto min-w-[172px] gap-2 whitespace-nowrap"
+                      className="h-9 w-auto min-w-[172px] gap-2 whitespace-nowrap text-[13px]"
                       aria-label="Link expiry"
                     >
                       <SelectValue />

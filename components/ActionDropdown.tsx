@@ -1,227 +1,141 @@
 'use client';
 
+import React from 'react';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { MoreHorizontal } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  FileActionItem,
+  FileActionsController,
+  useFileActions,
+} from '@/components/FileActions';
+import { cn } from '@/lib/utils';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
-import Image from 'next/image';
-import { actionsDropdownItems } from '@/constants';
-import Link from 'next/link';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  deleteFile,
-  renameFile,
-  restoreFile,
-} from '@/lib/actions/file.actions';
-import { usePathname } from 'next/navigation';
-import { FileDetails, ShareInput } from '@/components/ActionsModalContent';
-import { fileContentUrl } from '@/lib/preview';
-import { useToast } from '@/hooks/use-toast';
-import { ToastAction } from '@/components/ui/toast';
-import { ActionType, FileDocument } from '@/types';
+  menuContent,
+  menuItem,
+  menuItemDestructive,
+  menuSeparator,
+} from '@/components/ui/menu-styles';
+import { FileDocument } from '@/types';
 
-const FOLDER_ACTIONS = ['rename', 'details', 'delete'];
+type ItemPrimitive = React.ElementType<{
+  asChild?: boolean;
+  className?: string;
+  onSelect?: (e: Event) => void;
+  children?: React.ReactNode;
+}>;
 
-const baseName = (file: FileDocument) =>
-  file.isFolder || !file.extension
-    ? file.name
-    : file.name.replace(new RegExp(`\\.${file.extension}$`, 'i'), '');
-
-const ActionDropdown = ({ file }: { file: FileDocument }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(baseName(file));
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  const path = usePathname();
-
-  const closeAllModals = () => {
-    setIsModalOpen(false);
-    setIsDropdownOpen(false);
-    setAction(null);
-    setName(baseName(file));
-  };
-
-  const handleAction = async () => {
-    if (!action) return;
-    setIsLoading(true);
-
-    const actions = {
-      rename: () =>
-        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      delete: () => deleteFile({ fileId: file.$id, path }),
-    };
-
-    try {
-      const success = await actions[action.value as keyof typeof actions]();
-      if (success) {
-        closeAllModals();
-        if (action.value === 'delete') {
-          toast({
-            description: `Moved "${file.name}" to trash.`,
-            action: (
-              <ToastAction
-                altText="Undo"
-                onClick={() => restoreFile({ fileId: file.$id, path })}
-              >
-                Undo
-              </ToastAction>
-            ),
-          });
-        }
-      }
-    } catch {
-      toast({
-        description: `Failed to ${action.value} ${file.name}.`,
-        className: 'error-toast',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const items = file.isFolder
-    ? actionsDropdownItems.filter((i) => FOLDER_ACTIONS.includes(i.value))
-    : actionsDropdownItems;
-
-  const renderDialogContent = () => {
-    if (!action) return null;
-
-    const { value, label } = action;
-
+export const renderActionItems = (
+  items: FileActionItem[],
+  Item: ItemPrimitive,
+  Separator: React.ElementType<{ className?: string }>
+) =>
+  items.map((item) => {
+    const Icon = item.icon;
+    const className = cn(menuItem, item.danger && menuItemDestructive);
     return (
-      <DialogContent className="shad-dialog button">
-        <DialogHeader className="flex flex-col gap-3">
-          <DialogTitle className="text-center text-light-100 dark:text-ink-200">
-            {label}
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            {label} {file.name}
-          </DialogDescription>
-          {value === 'rename' && (
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          )}
-          {value === 'details' && <FileDetails file={file} />}
-          {value === 'share' && <ShareInput file={file} />}
-          {value === 'delete' && (
-            <p className="delete-confirmation">
-              Move{` `}
-              <span className="delete-file-name">{file.name}</span> to the
-              trash?
-            </p>
-          )}
-        </DialogHeader>
-        {['rename', 'delete'].includes(value) && (
-          <DialogFooter className="flex flex-col gap-3 md:flex-row">
-            <Button onClick={closeAllModals} className="modal-cancel-button">
-              Cancel
-            </Button>
-            <Button onClick={handleAction} className="modal-submit-button">
-              <p className="capitalize">{value}</p>
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="animate-spin"
-                />
-              )}
-            </Button>
-          </DialogFooter>
+      <React.Fragment key={item.key}>
+        {item.separatorBefore && <Separator className={menuSeparator} />}
+        {item.href ? (
+          <Item asChild className={className}>
+            <a href={item.href} download={item.download}>
+              <Icon aria-hidden="true" />
+              {item.label}
+            </a>
+          </Item>
+        ) : (
+          <Item className={className} onSelect={() => item.run()}>
+            <Icon aria-hidden="true" />
+            {item.label}
+          </Item>
         )}
-      </DialogContent>
+      </React.Fragment>
     );
-  };
+  });
 
+export const menuContentClass = cn(menuContent, 'min-w-[220px]');
+export const menuItemClass = menuItem;
+export const menuItemDangerClass = cn(menuItem, menuItemDestructive);
+export const menuSeparatorClass = menuSeparator;
+
+export const ActionMenu = ({
+  file,
+  controller,
+  className,
+  onOpenChange,
+}: {
+  file: FileDocument;
+  controller: FileActionsController;
+  className?: string;
+  onOpenChange?: (open: boolean) => void;
+}) => (
+  <DropdownMenuPrimitive.Root modal={false} onOpenChange={onOpenChange}>
+    <DropdownMenuPrimitive.Trigger
+      data-testid="file-actions"
+      aria-label={`More actions for ${file.name}`}
+      className={cn('fx-icon-btn', className)}
+    >
+      <MoreHorizontal />
+    </DropdownMenuPrimitive.Trigger>
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.Content
+        align="end"
+        sideOffset={4}
+        collisionPadding={8}
+        className={menuContentClass}
+      >
+        <DropdownMenuPrimitive.Label className="fx-menu-label max-w-[240px]">
+          {file.name}
+        </DropdownMenuPrimitive.Label>
+        {renderActionItems(
+          controller.items,
+          DropdownMenuPrimitive.Item,
+          DropdownMenuPrimitive.Separator
+        )}
+      </DropdownMenuPrimitive.Content>
+    </DropdownMenuPrimitive.Portal>
+  </DropdownMenuPrimitive.Root>
+);
+
+const SelfContainedDropdown = ({
+  file,
+  onOpen,
+  className,
+}: {
+  file: FileDocument;
+  onOpen?: (file: FileDocument) => void;
+  className?: string;
+}) => {
+  const controller = useFileActions(file, { onOpen });
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-        <DropdownMenuTrigger
-          className="shad-no-focus"
-          data-testid="file-actions"
-        >
-          <Image
-            src="/assets/icons/dots.svg"
-            alt="dots"
-            width={34}
-            height={34}
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel className="max-w-[200px] truncate">
-            {file.name}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {items.map((actionItem) => (
-            <DropdownMenuItem
-              key={actionItem.value}
-              className="shad-dropdown-item"
-              onClick={() => {
-                setAction(actionItem);
-
-                if (
-                  ['rename', 'share', 'delete', 'details'].includes(
-                    actionItem.value
-                  )
-                ) {
-                  setIsModalOpen(true);
-                }
-              }}
-            >
-              {actionItem.value === 'download' ? (
-                <Link
-                  href={fileContentUrl(file.$id, { download: true })}
-                  download={file.name}
-                  prefetch={false}
-                  className="flex items-center gap-2"
-                >
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </Link>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </div>
-              )}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      {renderDialogContent()}
-    </Dialog>
+    <>
+      <ActionMenu file={file} controller={controller} className={className} />
+      {controller.dialogs}
+    </>
   );
 };
+
+const ActionDropdown = ({
+  file,
+  controller,
+  onOpen,
+  className,
+  onOpenChange,
+}: {
+  file: FileDocument;
+  controller?: FileActionsController;
+  onOpen?: (file: FileDocument) => void;
+  className?: string;
+  onOpenChange?: (open: boolean) => void;
+}) =>
+  controller ? (
+    <ActionMenu
+      file={file}
+      controller={controller}
+      className={className}
+      onOpenChange={onOpenChange}
+    />
+  ) : (
+    <SelfContainedDropdown file={file} onOpen={onOpen} className={className} />
+  );
+
 export default ActionDropdown;
