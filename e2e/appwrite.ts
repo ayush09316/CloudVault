@@ -64,8 +64,15 @@ export const createTestUser = async (): Promise<TestUser> => {
 export const createSessionSecret = async (accountId: string) =>
   (await users.createSession(accountId)).secret;
 
-export const createLoginCode = async (accountId: string) =>
-  (await users.createToken(accountId, 6)).secret;
+// Real email OTPs are 6 digits and the OTP input only accepts digits, but
+// users.createToken returns hex — regenerate until it matches the real format.
+export const createLoginCode = async (accountId: string) => {
+  for (let i = 0; i < 200; i++) {
+    const { secret } = await users.createToken(accountId, 6);
+    if (/^\d{6}$/.test(secret)) return secret;
+  }
+  throw new Error('Could not generate a numeric login code');
+};
 
 export const findFileByName = async (userDocId: string, name: string) => {
   const res = await db.listDocuments(ids.database, ids.files, [

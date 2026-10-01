@@ -14,7 +14,10 @@ const Header = ({
   breadcrumbs?: React.ReactNode;
 }) => {
   return (
-    <header className="hidden h-16 shrink-0 items-center gap-4 border-b border-border bg-background/80 px-5 backdrop-blur-sm sm:flex lg:px-6">
+    <header
+      data-testid="app-header"
+      className="hidden h-16 shrink-0 items-center gap-4 border-b border-border bg-background/80 px-5 backdrop-blur-sm sm:flex lg:px-6"
+    >
       <div className="min-w-0 flex-1">
         {breadcrumbs ?? <ShellBreadcrumbs />}
       </div>

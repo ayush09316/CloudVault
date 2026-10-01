@@ -37,11 +37,13 @@ export const uploadPng = async (
   name: string,
   color = '#ff0000'
 ) => {
-  await page.locator('header.header input[type=file]').setInputFiles({
-    name,
-    mimeType: 'image/png',
-    buffer: await pngBuffer(color),
-  });
+  await page
+    .locator('[data-testid=app-header] input[type=file]')
+    .setInputFiles({
+      name,
+      mimeType: 'image/png',
+      buffer: await pngBuffer(color),
+    });
   await expect(fileItem(page, name)).toBeVisible({ timeout: 45_000 });
 };
 
