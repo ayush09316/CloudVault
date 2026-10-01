@@ -33,23 +33,67 @@ const envSchema = z.object({
     .min(1, 'NEXT_APPWRITE_KEY is missing'),
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
+type Env = z.infer<typeof envSchema>;
 
-if (!parsedEnv.success) {
-  const missingVars = parsedEnv.error.issues
-    .map((issue) => issue.message)
-    .join(', ');
-  throw new Error(`Invalid Appwrite environment configuration: ${missingVars}`);
-}
+let cached: Env | null = null;
 
+const env = (): Env => {
+  if (cached) return cached;
+  const parsed = envSchema.safeParse({
+    NEXT_PUBLIC_APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT,
+    NEXT_PUBLIC_APPWRITE_PROJECT: process.env.NEXT_PUBLIC_APPWRITE_PROJECT,
+    NEXT_PUBLIC_APPWRITE_DATABASE: process.env.NEXT_PUBLIC_APPWRITE_DATABASE,
+    NEXT_PUBLIC_APPWRITE_USERS_COLLECTION:
+      process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION,
+    NEXT_PUBLIC_APPWRITE_FILES_COLLECTION:
+      process.env.NEXT_PUBLIC_APPWRITE_FILES_COLLECTION,
+    NEXT_PUBLIC_APPWRITE_BUCKET: process.env.NEXT_PUBLIC_APPWRITE_BUCKET,
+    NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION:
+      process.env.NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION || undefined,
+    NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION:
+      process.env.NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION || undefined,
+    NEXT_APPWRITE_KEY: process.env.NEXT_APPWRITE_KEY,
+  });
+  if (!parsed.success) {
+    const missingVars = parsed.error.issues
+      .map((issue) => issue.message)
+      .join(', ');
+    throw new Error(
+      `Invalid Appwrite environment configuration: ${missingVars}`
+    );
+  }
+  cached = parsed.data;
+  return cached;
+};
+
+// Validated on first use rather than at import, so `next build` can load
+// route modules in an environment without Appwrite credentials (CI).
 export const appwriteConfig = {
-  endpointUrl: parsedEnv.data.NEXT_PUBLIC_APPWRITE_ENDPOINT,
-  projectId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_PROJECT,
-  databaseId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_DATABASE,
-  usersCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION,
-  filesCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_FILES_COLLECTION,
-  sharesCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION,
-  activityCollectionId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION,
-  bucketId: parsedEnv.data.NEXT_PUBLIC_APPWRITE_BUCKET,
-  secretKey: parsedEnv.data.NEXT_APPWRITE_KEY,
+  get endpointUrl() {
+    return env().NEXT_PUBLIC_APPWRITE_ENDPOINT;
+  },
+  get projectId() {
+    return env().NEXT_PUBLIC_APPWRITE_PROJECT;
+  },
+  get databaseId() {
+    return env().NEXT_PUBLIC_APPWRITE_DATABASE;
+  },
+  get usersCollectionId() {
+    return env().NEXT_PUBLIC_APPWRITE_USERS_COLLECTION;
+  },
+  get filesCollectionId() {
+    return env().NEXT_PUBLIC_APPWRITE_FILES_COLLECTION;
+  },
+  get sharesCollectionId() {
+    return env().NEXT_PUBLIC_APPWRITE_SHARES_COLLECTION;
+  },
+  get activityCollectionId() {
+    return env().NEXT_PUBLIC_APPWRITE_ACTIVITY_COLLECTION;
+  },
+  get bucketId() {
+    return env().NEXT_PUBLIC_APPWRITE_BUCKET;
+  },
+  get secretKey() {
+    return env().NEXT_APPWRITE_KEY;
+  },
 };
